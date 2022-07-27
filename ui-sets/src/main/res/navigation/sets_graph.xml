@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setList"
+    app:startDestination="@id/setsFragment">
+
+    <include app:graph="@navigation/set_detail_graph" />
+    <include app:graph="@navigation/cards_graph" />
+    <include app:graph="@navigation/settings_graph" />
+
+    <fragment
+        android:id="@+id/setsFragment"
+        android:name="uz.javokhirdev.svocabulary.presentation.sets.SetsFragment"
+        android:label="@string/study_sets"
+        tools:layout="@layout/fragment_sets">
+        <action
+            android:id="@+id/setsToDetail"
+            app:destination="@id/setDetail"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim">
+            <argument
+                android:name="setId"
+                android:defaultValue="-1L"
+                app:argType="long" />
+        </action>
+        <action
+            android:id="@+id/setsToCards"
+            app:destination="@id/cards"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim">
+            <argument
+                android:name="setId"
+                android:defaultValue="-1L"
+                app:argType="long" />
+            <argument
+                android:name="setTitle"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/setsToSettings"
+            app:destination="@id/settings"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+</navigation>
