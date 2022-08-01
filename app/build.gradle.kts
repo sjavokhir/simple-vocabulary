@@ -48,14 +48,16 @@ android {
 }
 
 dependencies {
-    implementation(AndroidX.coreKtx)
-    implementation(AndroidX.appCompat)
+    implementation(Base.coreKtx)
+    implementation(Base.appCompat)
 
     implementation(Compose.runtime)
     implementation(Compose.compiler)
     implementation(Compose.ui)
     implementation(Compose.uiToolingPreview)
-    implementation(Compose.material)
+    implementation(Compose.material3)
+    implementation(Compose.material3WindowSizeClass)
+    implementation(Compose.icons)
     implementation(Compose.navigation)
     implementation(Compose.hiltNavigationCompose)
     implementation(Compose.viewModelCompose)
@@ -70,5 +72,5 @@ dependencies {
     implementation(Room.roomKtx)
     implementation(Room.roomRuntime)
 
-    implementation(Coil.coilCompose)
+    implementation(Other.coilCompose)
 }

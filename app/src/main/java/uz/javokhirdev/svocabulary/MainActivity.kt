@@ -15,6 +15,7 @@ import uz.javokhirdev.svocabulary.ui.theme.SimplevocabularyTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             SimplevocabularyTheme {
                 // A surface container using the 'background' color from the theme

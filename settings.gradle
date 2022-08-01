@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "simple-vocabulary"
 include ":app"
+
+include ":core-designsystem"

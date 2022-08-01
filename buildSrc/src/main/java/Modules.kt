@@ -1,6 +1,6 @@
 object Modules {
     const val core = ":core"
-    const val coreUi = ":core-ui"
+    const val coreDesignSystem = ":core-designsystem"
 
     const val onboardingDomain = ":onboarding:domain"
     const val onboardingPresentation = ":onboarding:presentation"
