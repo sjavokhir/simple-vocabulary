@@ -10,24 +10,19 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url "https://jitpack.io"
-        }
     }
 }
 rootProject.name = "simple-vocabulary"
 include ":app"
-include ":base"
-include ":components"
-include ":data"
-include ":database"
-include ":preferences"
-include ":repository"
-include ":utils"
-include ":ui-cards"
-include ":ui-carddetail"
-include ":ui-flashcards"
-include ":ui-sets"
-include ":ui-setdetail"
-include ":ui-settings"
-include ":ui-swipe-cards"
+
+include ":core-data"
+include ":core-database"
+include ":core-designsystem"
+include ":core-model"
+include ":core-navigation"
+include ":core-ui"
+
+include ":feature-sets"
+include ":feature-sets:data"
+include ":feature-sets:domain"
+include ":feature-sets:presentation"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Platform.Theme.Vocab" parent="Theme.Material3.DayNight">
+        <item name="android:statusBarColor">@color/black30</item>
+    </style>
+
+    <style name="Theme.Vocab" parent="Platform.Theme.Vocab">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+    </style>
+
+    <style name="Theme.Vocab.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Vocab.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+    <style name="Theme.Vocab.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
+</resources>
