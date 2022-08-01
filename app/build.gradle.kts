@@ -48,6 +48,12 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.coreDesignSystem))
+    implementation(project(Modules.coreNavigation))
+    implementation(project(Modules.coreUi))
+
+    implementation(project(Modules.setsPresentation))
+
     implementation(Base.coreKtx)
     implementation(Base.appCompat)
 
@@ -67,10 +73,4 @@ dependencies {
 
     implementation(DaggerHilt.hiltAndroid)
     kapt(DaggerHilt.hiltCompiler)
-
-    kapt(Room.roomCompiler)
-    implementation(Room.roomKtx)
-    implementation(Room.roomRuntime)
-
-    implementation(Other.coilCompose)
 }

@@ -1,55 +1,17 @@
 package uz.javokhirdev.svocabulary.core.designsystem.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-/**
- * Vocab in Android filled button with generic content slot. Wraps Material 3 [Button].
- *
- * @param onClick Will be called when the user clicks the button.
- * @param modifier Modifier to be applied to the button.
- * @param enabled Controls the enabled state of the button. When `false`, this button will not be
- * clickable and will appear disabled to accessibility services.
- * @param small Whether or not the size of the button should be small or regular.
- * @param colors [ButtonColors] that will be used to resolve the container and content color for
- * this button in different states. See [VocabButtonDefaults.filledButtonColors].
- * @param contentPadding The spacing values to apply internally between the container and the
- * content. See [VocabButtonDefaults.buttonContentPadding].
- * @param content The button content.
- */
-@Composable
-fun VocabFilledButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    small: Boolean = false,
-    colors: ButtonColors = VocabButtonDefaults.filledButtonColors(),
-    contentPadding: PaddingValues = VocabButtonDefaults.buttonContentPadding(small = small),
-    content: @Composable RowScope.() -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = if (small) {
-            modifier.heightIn(min = VocabButtonDefaults.SmallButtonHeight)
-        } else {
-            modifier
-        },
-        enabled = enabled,
-        colors = colors,
-        contentPadding = contentPadding,
-        content = {
-            ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
-                content()
-            }
-        }
-    )
-}
+import uz.javokhirdev.svocabulary.core.ui.R
 
 /**
  * Vocab in Android filled button with text and icon content slots.
@@ -76,53 +38,7 @@ fun VocabFilledButton(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    VocabFilledButton(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        small = small,
-        colors = colors,
-        contentPadding = VocabButtonDefaults.buttonContentPadding(
-            small = small,
-            leadingIcon = leadingIcon != null,
-            trailingIcon = trailingIcon != null
-        )
-    ) {
-        VocabButtonContent(
-            text = text,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon
-        )
-    }
-}
-
-/**
- * Vocab in Android outlined button with generic content slot. Wraps Material 3 [OutlinedButton].
- *
- * @param onClick Will be called when the user clicks the button.
- * @param modifier Modifier to be applied to the button.
- * @param enabled Controls the enabled state of the button. When `false`, this button will not be
- * clickable and will appear disabled to accessibility services.
- * @param small Whether or not the size of the button should be small or regular.
- * @param border Border to draw around the button. Pass `null` here for no border.
- * @param colors [ButtonColors] that will be used to resolve the container and content color for
- * this button in different states. See [VocabButtonDefaults.outlinedButtonColors].
- * @param contentPadding The spacing values to apply internally between the container and the
- * content. See [VocabButtonDefaults.buttonContentPadding].
- * @param content The button content.
- */
-@Composable
-fun VocabOutlinedButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    small: Boolean = false,
-    border: BorderStroke? = VocabButtonDefaults.outlinedButtonBorder(enabled = enabled),
-    colors: ButtonColors = VocabButtonDefaults.outlinedButtonColors(),
-    contentPadding: PaddingValues = VocabButtonDefaults.buttonContentPadding(small = small),
-    content: @Composable RowScope.() -> Unit
-) {
-    OutlinedButton(
+    Button(
         onClick = onClick,
         modifier = if (small) {
             modifier.heightIn(min = VocabButtonDefaults.SmallButtonHeight)
@@ -130,12 +46,19 @@ fun VocabOutlinedButton(
             modifier
         },
         enabled = enabled,
-        border = border,
         colors = colors,
-        contentPadding = contentPadding,
+        contentPadding = VocabButtonDefaults.buttonContentPadding(
+            small = small,
+            leadingIcon = leadingIcon != null,
+            trailingIcon = trailingIcon != null
+        ),
         content = {
             ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
-                content()
+                VocabButtonContent(
+                    text = text,
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon
+                )
             }
         }
     )
@@ -168,52 +91,7 @@ fun VocabOutlinedButton(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    VocabOutlinedButton(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        small = small,
-        border = border,
-        colors = colors,
-        contentPadding = VocabButtonDefaults.buttonContentPadding(
-            small = small,
-            leadingIcon = leadingIcon != null,
-            trailingIcon = trailingIcon != null
-        )
-    ) {
-        VocabButtonContent(
-            text = text,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon
-        )
-    }
-}
-
-/**
- * Vocab in Android text button with generic content slot. Wraps Material 3 [TextButton].
- *
- * @param onClick Will be called when the user clicks the button.
- * @param modifier Modifier to be applied to the button.
- * @param enabled Controls the enabled state of the button. When `false`, this button will not be
- * clickable and will appear disabled to accessibility services.
- * @param small Whether or not the size of the button should be small or regular.
- * @param colors [ButtonColors] that will be used to resolve the container and content color for
- * this button in different states. See [VocabButtonDefaults.textButtonColors].
- * @param contentPadding The spacing values to apply internally between the container and the
- * content. See [VocabButtonDefaults.buttonContentPadding].
- * @param content The button content.
- */
-@Composable
-fun VocabTextButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    small: Boolean = false,
-    colors: ButtonColors = VocabButtonDefaults.textButtonColors(),
-    contentPadding: PaddingValues = VocabButtonDefaults.buttonContentPadding(small = small),
-    content: @Composable RowScope.() -> Unit
-) {
-    TextButton(
+    OutlinedButton(
         onClick = onClick,
         modifier = if (small) {
             modifier.heightIn(min = VocabButtonDefaults.SmallButtonHeight)
@@ -221,11 +99,20 @@ fun VocabTextButton(
             modifier
         },
         enabled = enabled,
+        border = border,
         colors = colors,
-        contentPadding = contentPadding,
+        contentPadding = VocabButtonDefaults.buttonContentPadding(
+            small = small,
+            leadingIcon = leadingIcon != null,
+            trailingIcon = trailingIcon != null
+        ),
         content = {
             ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
-                content()
+                VocabButtonContent(
+                    text = text,
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon
+                )
             }
         }
     )
@@ -256,22 +143,55 @@ fun VocabTextButton(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    VocabTextButton(
+    TextButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = if (small) {
+            modifier.heightIn(min = VocabButtonDefaults.SmallButtonHeight)
+        } else {
+            modifier
+        },
         enabled = enabled,
-        small = small,
         colors = colors,
         contentPadding = VocabButtonDefaults.buttonContentPadding(
             small = small,
             leadingIcon = leadingIcon != null,
             trailingIcon = trailingIcon != null
-        )
+        ),
+        content = {
+            ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
+                VocabButtonContent(
+                    text = text,
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun VocabExtendedFloatingActionButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    @StringRes title: Int,
+    icon: ImageVector? = null
+) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        modifier = modifier
     ) {
-        VocabButtonContent(
-            text = text,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(id = R.string.add_set),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        Text(
+            text = stringResource(id = title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

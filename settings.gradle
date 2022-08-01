@@ -16,3 +16,11 @@ rootProject.name = "simple-vocabulary"
 include ":app"
 
 include ":core-designsystem"
+include ":core-model"
+include ":core-navigation"
+include ":core-ui"
+
+include ":feature-sets"
+include ":feature-sets:data"
+include ":feature-sets:domain"
+include ":feature-sets:presentation"

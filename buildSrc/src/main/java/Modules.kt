@@ -1,11 +1,13 @@
 object Modules {
-    const val core = ":core"
     const val coreDesignSystem = ":core-designsystem"
+    const val coreNavigation = ":core-navigation"
+    const val coreUi = ":core-ui"
 
-    const val onboardingDomain = ":onboarding:domain"
-    const val onboardingPresentation = ":onboarding:presentation"
+    const val setsData = ":feature-sets:data"
+    const val setsDomain = ":feature-sets:domain"
+    const val setsPresentation = ":feature-sets:presentation"
 
-    const val trackerData = ":tracker:data"
-    const val trackerDomain = ":tracker:domain"
-    const val trackerPresentation = ":tracker:presentation"
+    const val setDetailData = ":feature-set-detail:data"
+    const val setDetailDomain = ":feature-set-detail:domain"
+    const val setDetailPresentation = ":feature-set-detail:presentation"
 }

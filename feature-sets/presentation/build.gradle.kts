@@ -3,5 +3,7 @@ apply {
 }
 
 dependencies {
+    "implementation"(project(Modules.coreDesignSystem))
+    "implementation"(project(Modules.coreNavigation))
     "implementation"(project(Modules.coreUi))
 }
