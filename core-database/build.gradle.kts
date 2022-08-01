@@ -3,8 +3,9 @@ apply {
 }
 
 dependencies {
-    "implementation"(project(Modules.coreData))
     "implementation"(project(Modules.coreModel))
 
-    "implementation"(Coroutines.coroutines)
+    "kapt"(Room.roomCompiler)
+    "implementation"(Room.roomKtx)
+    "implementation"(Room.roomRuntime)
 }

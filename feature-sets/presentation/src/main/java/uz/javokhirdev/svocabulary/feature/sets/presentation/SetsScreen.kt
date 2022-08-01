@@ -76,33 +76,7 @@ fun SetsScreen(
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
             ) {
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .testTag("forYou:feed"),
-//                ) {
-//                    InterestsSelection(
-//                        interestsSelectionState = interestsSelectionState,
-//                        showLoadingUIIfLoading = true,
-//                        onAuthorCheckedChanged = onAuthorCheckedChanged,
-//                        onTopicCheckedChanged = onTopicCheckedChanged,
-//                        saveFollowedTopics = saveFollowedTopics
-//                    )
-//
-//                    Feed(
-//                        feedState = feedState,
-//                        // Avoid showing a second loading wheel if we already are for the interests
-//                        // selection
-//                        showLoadingUIIfLoading =
-//                        interestsSelectionState !is ForYouInterestsSelectionUiState.Loading,
-//                        numberOfColumns = numberOfColumns,
-//                        onNewsResourcesCheckedChanged = onNewsResourcesCheckedChanged
-//                    )
-//
-//                    item {
-//                        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
-//                    }
-//                }
+
             }
         }
     }
