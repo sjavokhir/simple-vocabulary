@@ -6,6 +6,7 @@ object Modules {
     const val coreNavigation = ":core-navigation"
     const val coreUi = ":core-ui"
 
+    const val setsData = ":feature-sets:data"
     const val setsDomain = ":feature-sets:domain"
     const val setsPresentation = ":feature-sets:presentation"
 }

@@ -12,8 +12,7 @@ import uz.javokhirdev.svocabulary.feature.sets.domain.usecase.*
 @InstallIn(ViewModelComponent::class)
 object SetsDomainModule {
 
-    @ViewModelScoped
-    @Provides
+    @[Provides ViewModelScoped]
     fun provideSetsUseCases(repository: SetsRepository): SetsUseCases {
         return SetsUseCases(
             getSets = GetSets(repository),

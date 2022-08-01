@@ -1,16 +1,24 @@
 package uz.javokhirdev.svocabulary.feature.sets.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabExtendedFloatingActionButton
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
+import uz.javokhirdev.svocabulary.core.designsystem.component.VocabLoadingWheel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabTopAppBar
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
+import uz.javokhirdev.svocabulary.core.model.SetModel
 import uz.javokhirdev.svocabulary.core.ui.R
 
 @ExperimentalLayoutApi
@@ -22,8 +30,11 @@ fun SetsRoute(
     navigateToSettings: () -> Unit,
     navigateToSetDetail: () -> Unit
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     SetsScreen(
         modifier = modifier,
+        uiState = uiState,
         onSettingsClick = navigateToSettings,
         onAddSetClick = navigateToSetDetail
     )
@@ -34,6 +45,7 @@ fun SetsRoute(
 @Composable
 fun SetsScreen(
     modifier: Modifier,
+    uiState: SetsState,
     onSettingsClick: () -> Unit,
     onAddSetClick: () -> Unit
 ) {
@@ -71,13 +83,53 @@ fun SetsScreen(
             },
             containerColor = Color.Transparent
         ) { innerPadding ->
-            BoxWithConstraints(
+            Box(
                 modifier = modifier
+                    .fillMaxSize()
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
             ) {
-
+                if (uiState.isLoading) {
+                    VocabLoadingWheel(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(uiState.sets) {
+                            SetItem(it)
+                        }
+                    }
+                }
             }
+        }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun SetItem(model: SetModel) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
+        onClick = {}
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = model.title.orEmpty(),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = model.description.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

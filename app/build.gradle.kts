@@ -48,10 +48,15 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.coreData))
+    implementation(project(Modules.coreDatabase))
     implementation(project(Modules.coreDesignSystem))
+    implementation(project(Modules.coreModel))
     implementation(project(Modules.coreNavigation))
     implementation(project(Modules.coreUi))
 
+    implementation(project(Modules.setsData))
+    implementation(project(Modules.setsDomain))
     implementation(project(Modules.setsPresentation))
 
     implementation(Base.coreKtx)

@@ -1,13 +1,11 @@
 package uz.javokhirdev.svocabulary.core.designsystem.component
 
-import android.content.res.Configuration
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,14 +17,11 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import uz.javokhirdev.svocabulary.core.designsystem.theme.VocabTheme
 
 @Composable
 fun VocabLoadingWheel(
-    contentDesc: String,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition()
@@ -80,10 +75,10 @@ fun VocabLoadingWheel(
     // Draws out the LoadingWheel Canvas composable and sets the animations
     Canvas(
         modifier = modifier
-            .size(48.dp)
+            .size(56.dp)
             .padding(8.dp)
             .graphicsLayer { rotationZ = rotationAnim }
-            .semantics { contentDescription = contentDesc }
+            .semantics { contentDescription = "Loading" }
     ) {
         repeat(NUM_OF_LINES) { index ->
             rotate(degrees = index * 30f) {
@@ -97,23 +92,6 @@ fun VocabLoadingWheel(
                     end = Offset(size.width / 2, floatAnimValues[index].value * size.height / 4)
                 )
             }
-        }
-    }
-}
-
-@Preview(
-    name = "Loading Wheel Light Preview",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
-    name = "Loading Wheel Dark Preview",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
-@Composable
-fun VocabLoadingWheelPreview() {
-    VocabTheme {
-        Surface {
-            VocabLoadingWheel(contentDesc = "LoadingWheel")
         }
     }
 }
