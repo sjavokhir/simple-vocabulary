@@ -11,4 +11,10 @@ object Modules {
     const val setsPresentation = ":feature-sets:presentation"
 
     const val setDetailPresentation = ":feature-set-detail"
+
+    const val cardsData = ":feature-cards:data"
+    const val cardsDomain = ":feature-cards:domain"
+    const val cardsPresentation = ":feature-cards:presentation"
+
+    const val cardDetailPresentation = ":feature-card-detail"
 }

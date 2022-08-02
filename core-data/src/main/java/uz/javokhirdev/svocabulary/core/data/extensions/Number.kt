@@ -7,3 +7,5 @@ fun Long?.orNotId(): Long {
 fun Long?.orNullId(): Long? {
     return if (this != null && this >= 0) this else null
 }
+
+fun Int?.orZero(): Int = this ?: 0

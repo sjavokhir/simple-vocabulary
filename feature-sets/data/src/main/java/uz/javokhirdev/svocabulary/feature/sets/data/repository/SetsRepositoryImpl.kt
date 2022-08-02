@@ -6,7 +6,9 @@ import uz.javokhirdev.svocabulary.core.database.dao.CardsDao
 import uz.javokhirdev.svocabulary.core.database.dao.SetsDao
 import uz.javokhirdev.svocabulary.core.database.model.asEntity
 import uz.javokhirdev.svocabulary.core.database.model.asSetModel
+import uz.javokhirdev.svocabulary.core.database.model.asSetWithCardsModel
 import uz.javokhirdev.svocabulary.core.model.SetModel
+import uz.javokhirdev.svocabulary.core.model.SetWithCardsModel
 import uz.javokhirdev.svocabulary.feature.sets.domain.repository.SetsRepository
 
 class SetsRepositoryImpl(
@@ -18,6 +20,12 @@ class SetsRepositoryImpl(
     override fun getSets(): Flow<List<SetModel>> {
         return setsDao.getSets().map { list ->
             list.map { it.asSetModel() }
+        }
+    }
+
+    override fun getSetsWithCount(): Flow<List<SetWithCardsModel>> {
+        return setsDao.getSetsWithCount().map { list ->
+            list.map { it.asSetWithCardsModel() }
         }
     }
 

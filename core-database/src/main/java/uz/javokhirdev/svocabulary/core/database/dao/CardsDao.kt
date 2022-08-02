@@ -16,6 +16,9 @@ interface CardsDao {
     )
     fun getCards(setId: Long, keywords: String = ""): List<CardEntity>
 
+    @Query("SELECT COUNT(card_id) FROM cards WHERE card_set_id = :setId")
+    fun getCount(setId: Long): Int
+
     @Query(value = "SELECT * FROM cards WHERE card_id = :id")
     fun getCardById(id: Long): CardEntity
 

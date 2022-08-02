@@ -6,5 +6,5 @@ class GetSets(
     private val repository: SetsRepository
 ) {
 
-    operator fun invoke() = repository.getSets()
+    operator fun invoke() = repository.getSetsWithCount()
 }

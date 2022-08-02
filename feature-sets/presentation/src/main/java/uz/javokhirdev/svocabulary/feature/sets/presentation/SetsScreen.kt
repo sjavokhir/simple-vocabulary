@@ -11,14 +11,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
+import uz.javokhirdev.svocabulary.core.data.extensions.orZero
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabExtendedFloatingActionButton
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabLoadingWheel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabTopAppBar
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
 import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
-import uz.javokhirdev.svocabulary.core.model.SetModel
+import uz.javokhirdev.svocabulary.core.model.SetWithCardsModel
 import uz.javokhirdev.svocabulary.core.ui.R
 
 @ExperimentalLayoutApi
@@ -94,7 +96,7 @@ fun SetsScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun SetItem(
-    model: SetModel,
+    model: SetWithCardsModel,
     onAddSetClick: (Long?) -> Unit
 ) {
     val spacing = LocalSpacing.current
@@ -112,18 +114,30 @@ fun SetItem(
             width = spacing.stroke,
             color = Color.Gray.copy(alpha = 0.25f)
         ),
-        onClick = { onAddSetClick(model.id) }
+        onClick = { onAddSetClick(model.set?.id) }
     ) {
         Column(modifier = Modifier.padding(spacing.normal)) {
             Text(
-                text = model.title.orEmpty(),
+                text = model.set?.title.orEmpty(),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(spacing.small))
-            Text(
-                text = model.description.orEmpty(),
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Row(horizontalArrangement = Arrangement.End) {
+                Text(
+                    text = model.set?.description.orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(spacing.normal))
+                Text(
+                    text = model.cardsCount.orZero().toString(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
         }
     }
 }

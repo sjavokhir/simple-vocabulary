@@ -3,6 +3,7 @@ package uz.javokhirdev.svocabulary.core.database.dao
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import uz.javokhirdev.svocabulary.core.database.model.SetEntity
+import uz.javokhirdev.svocabulary.core.database.model.SetWithCardsEntity
 import uz.javokhirdev.svocabulary.core.database.util.upsert
 
 @Dao
@@ -10,6 +11,10 @@ interface SetsDao {
 
     @Query(value = "SELECT * FROM sets ORDER BY created_at DESC")
     fun getSets(): Flow<List<SetEntity>>
+
+    @Transaction
+    @Query(value = "SELECT *, (SELECT COUNT(*) FROM cards WHERE card_set_id = sets.set_id) AS cardsCount FROM sets;")
+    fun getSetsWithCount(): Flow<List<SetWithCardsEntity>>
 
     @Query(value = "SELECT * FROM sets WHERE set_id = :id")
     fun getSetById(id: Long?): Flow<SetEntity?>

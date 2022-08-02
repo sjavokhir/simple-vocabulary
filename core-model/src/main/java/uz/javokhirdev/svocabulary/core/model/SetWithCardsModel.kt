@@ -1,6 +1,6 @@
 package uz.javokhirdev.svocabulary.core.model
 
 data class SetWithCardsModel(
-    val set: SetModel,
-    val cards: List<CardModel>? = emptyList()
+    val set: SetModel? = null,
+    val cardsCount: Int? = null
 )
