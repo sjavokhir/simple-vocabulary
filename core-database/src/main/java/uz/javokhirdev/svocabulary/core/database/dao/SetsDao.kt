@@ -1,22 +1,18 @@
 package uz.javokhirdev.svocabulary.core.database.dao
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import uz.javokhirdev.svocabulary.core.database.model.SetEntity
-import uz.javokhirdev.svocabulary.core.database.model.SetWithCards
 import uz.javokhirdev.svocabulary.core.database.util.upsert
 
 @Dao
 interface SetsDao {
 
     @Query(value = "SELECT * FROM sets ORDER BY created_at DESC")
-    suspend fun getSets(): List<SetEntity>
-
-    @Transaction
-    @Query(value = "SELECT * FROM sets")
-    suspend fun getSetsWithCards(): List<SetWithCards>
+    fun getSets(): Flow<List<SetEntity>>
 
     @Query(value = "SELECT * FROM sets WHERE set_id = :id")
-    suspend fun getSetById(id: Long?): SetEntity?
+    fun getSetById(id: Long?): Flow<SetEntity?>
 
     /**
      * Inserts [obj] into the db if they don't exist, and ignores those that do

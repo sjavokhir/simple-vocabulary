@@ -24,31 +24,14 @@ import uz.javokhirdev.svocabulary.core.ui.R
 @ExperimentalLayoutApi
 @ExperimentalMaterial3Api
 @Composable
-fun SetsRoute(
+fun SetsScreen(
     modifier: Modifier = Modifier,
     viewModel: SetsViewModel = hiltViewModel(),
-    navigateToSettings: () -> Unit,
-    navigateToSetDetail: (Long?) -> Unit
-) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    SetsScreen(
-        modifier = modifier,
-        uiState = uiState,
-        onSettingsClick = navigateToSettings,
-        onAddSetClick = navigateToSetDetail
-    )
-}
-
-@ExperimentalLayoutApi
-@ExperimentalMaterial3Api
-@Composable
-fun SetsScreen(
-    modifier: Modifier,
-    uiState: SetsState,
     onSettingsClick: () -> Unit,
     onAddSetClick: (Long?) -> Unit
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     VocabGradientBackground {
         Scaffold(
             topBar = {

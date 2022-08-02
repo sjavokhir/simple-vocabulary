@@ -3,6 +3,7 @@ package uz.javokhirdev.svocabulary.feature.setdetail.presentation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +31,7 @@ fun SetDetailScreen(
     val uiState = viewModel.uiState.collectAsState().value
 
     if (uiState.isSuccess) {
-        onBackClick()
-        return
+        LaunchedEffect(Unit) { onBackClick() }
     }
 
     VocabGradientBackground {

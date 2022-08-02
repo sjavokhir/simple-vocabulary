@@ -1,9 +1,6 @@
 package uz.javokhirdev.svocabulary.feature.sets.data.repository
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import uz.javokhirdev.svocabulary.core.data.DispatcherProvider
 import uz.javokhirdev.svocabulary.core.database.dao.CardsDao
 import uz.javokhirdev.svocabulary.core.database.dao.SetsDao
@@ -18,21 +15,15 @@ class SetsRepositoryImpl(
     private val provider: DispatcherProvider
 ) : SetsRepository {
 
-    override fun getSets(): Flow<List<SetModel>> = flow {
-        val sets = setsDao.getSets().map { it.asSetModel() }
+    override fun getSets(): Flow<List<SetModel>> {
+        return setsDao.getSets().map { list ->
+            list.map { it.asSetModel() }
+        }
+    }
 
-        emit(sets)
-    }.catch {
-        emit(emptyList())
-    }.flowOn(provider.io())
-
-    override fun getSetById(id: Long): Flow<SetModel> = flow {
-        val model = setsDao.getSetById(id).asSetModel()
-
-        emit(model)
-    }.catch {
-        emit(SetModel())
-    }.flowOn(provider.io())
+    override fun getSetById(id: Long): Flow<SetModel> {
+        return setsDao.getSetById(id).map { it.asSetModel() }
+    }
 
     override suspend fun upsertSet(obj: SetModel): Flow<Boolean> = flow {
         setsDao.upsertSet(obj.asEntity())
