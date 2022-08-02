@@ -1,5 +1,6 @@
 package uz.javokhirdev.svocabulary.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -12,9 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import uz.javokhirdev.svocabulary.core.data.Extras
+import uz.javokhirdev.svocabulary.feature.carddetail.presentation.CardDetailScreen
+import uz.javokhirdev.svocabulary.feature.cards.presentation.CardsScreen
 import uz.javokhirdev.svocabulary.feature.setdetail.presentation.SetDetailScreen
 import uz.javokhirdev.svocabulary.feature.sets.presentation.SetsScreen
 
+@ExperimentalAnimationApi
 @ExperimentalLayoutApi
 @ExperimentalMaterial3Api
 @Composable
@@ -34,7 +38,8 @@ fun VocabNavHost(
         composable(route = Route.SETS) {
             SetsScreen(
                 onSettingsClick = {},
-                onAddSetClick = navActions.navigateToSetDetail
+                onAddSetClick = navActions.navigateToSetDetail,
+                onSetClick = navActions.navigateToCards
             )
         }
         composable(
@@ -42,6 +47,26 @@ fun VocabNavHost(
             arguments = listOf(navArgument(Extras.SET_ID) { type = NavType.LongType })
         ) {
             SetDetailScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = "${Route.CARDS}/{${Extras.SET_ID}}",
+            arguments = listOf(navArgument(Extras.SET_ID) { type = NavType.LongType })
+        ) {
+            CardsScreen(
+                onBackClick = { navController.popBackStack() },
+                onAddCardClick = navActions.navigateToCardDetail
+            )
+        }
+        composable(
+            route = "${Route.CARD_DETAIL}/{${Extras.SET_ID}}/{${Extras.CARD_ID}}",
+            arguments = listOf(
+                navArgument(Extras.SET_ID) { type = NavType.LongType },
+                navArgument(Extras.CARD_ID) { type = NavType.LongType },
+            )
+        ) {
+            CardDetailScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }

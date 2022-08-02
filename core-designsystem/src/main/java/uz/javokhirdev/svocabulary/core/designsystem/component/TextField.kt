@@ -41,7 +41,6 @@ fun VocabTextField(
         BasicTextField(
             value = text,
             onValueChange = onValueChange,
-            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(spacing.normal),

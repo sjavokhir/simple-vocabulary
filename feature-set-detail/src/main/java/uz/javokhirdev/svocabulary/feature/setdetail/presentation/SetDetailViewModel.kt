@@ -101,13 +101,13 @@ class SetDetailViewModel @Inject constructor(
         )
 
         viewModelScope.launch(provider.io()) {
-            val obj = SetModel(
+            val model = SetModel(
                 id = setId.orNullId(),
                 title = uiState.value.title,
                 description = uiState.value.description
             )
 
-            setsUseCases.upsertSet(obj).collectLatest {
+            setsUseCases.upsertSet(model).collectLatest {
                 uiState.value = uiState.value.copy(
                     isLoading = false,
                     isSuccess = it

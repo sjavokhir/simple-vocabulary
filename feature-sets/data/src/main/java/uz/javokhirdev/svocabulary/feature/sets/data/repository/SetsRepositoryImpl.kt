@@ -17,24 +17,18 @@ class SetsRepositoryImpl(
     private val provider: DispatcherProvider
 ) : SetsRepository {
 
-    override fun getSets(): Flow<List<SetModel>> {
-        return setsDao.getSets().map { list ->
-            list.map { it.asSetModel() }
-        }
-    }
-
     override fun getSetsWithCount(): Flow<List<SetWithCardsModel>> {
         return setsDao.getSetsWithCount().map { list ->
             list.map { it.asSetWithCardsModel() }
         }
     }
 
-    override fun getSetById(id: Long): Flow<SetModel> {
-        return setsDao.getSetById(id).map { it.asSetModel() }
+    override fun getSetById(setId: Long): Flow<SetModel> {
+        return setsDao.getSetById(setId).map { it.asSetModel() }
     }
 
-    override suspend fun upsertSet(obj: SetModel): Flow<Boolean> = flow {
-        setsDao.upsertSet(obj.asEntity())
+    override suspend fun upsertSet(model: SetModel): Flow<Boolean> = flow {
+        setsDao.upsertSet(model.asEntity())
 
         emit(true)
     }.catch {

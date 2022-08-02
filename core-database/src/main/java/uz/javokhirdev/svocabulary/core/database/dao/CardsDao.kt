@@ -1,6 +1,7 @@
 package uz.javokhirdev.svocabulary.core.database.dao
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import uz.javokhirdev.svocabulary.core.database.model.CardEntity
 import uz.javokhirdev.svocabulary.core.database.util.upsert
 
@@ -10,42 +11,47 @@ interface CardsDao {
     @Query(
         value = """
             SELECT * FROM cards WHERE card_set_id = :setId 
+            ORDER BY created_at DESC
+        """
+    )
+    fun getCards(setId: Long): Flow<List<CardEntity>>
+
+    @Query(
+        value = """
+            SELECT * FROM cards WHERE card_set_id = :setId 
             AND (card_term LIKE :keywords OR card_definition LIKE :keywords)
             ORDER BY created_at DESC
         """
     )
-    fun getCards(setId: Long, keywords: String = ""): List<CardEntity>
-
-    @Query("SELECT COUNT(card_id) FROM cards WHERE card_set_id = :setId")
-    fun getCount(setId: Long): Int
+    fun getCards(setId: Long, keywords: String = ""): Flow<List<CardEntity>>
 
     @Query(value = "SELECT * FROM cards WHERE card_id = :id")
-    fun getCardById(id: Long): CardEntity
+    fun getCardById(id: Long): Flow<CardEntity?>
 
     /**
-     * Inserts [obj] into the db if they don't exist, and ignores those that do
+     * Inserts [entity] into the db if they don't exist, and ignores those that do
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(obj: CardEntity): Long
+    suspend fun insert(entity: CardEntity): Long
 
     /**
-     * Updates [obj] in the db that match the primary key, and no-ops if they don't
+     * Updates [entity] in the db that match the primary key, and no-ops if they don't
      */
     @Update
-    suspend fun update(obj: CardEntity)
+    suspend fun update(entity: CardEntity)
 
     @Transaction
-    suspend fun upsertCard(obj: CardEntity) = upsert(
-        item = obj,
+    suspend fun upsertCard(entity: CardEntity) = upsert(
+        item = entity,
         insertMany = ::insert,
         updateMany = ::update
     )
 
     /**
-     * Deletes cards in the db matching the specified [cardId]
+     * Deletes cards in the db matching the specified [id]
      */
-    @Query(value = "DELETE FROM cards WHERE card_id = :cardId")
-    suspend fun delete(cardId: Long)
+    @Query(value = "DELETE FROM cards WHERE card_id = :id")
+    suspend fun delete(id: Long)
 
     /**
      * Deletes cards in the db matching the specified [setId]

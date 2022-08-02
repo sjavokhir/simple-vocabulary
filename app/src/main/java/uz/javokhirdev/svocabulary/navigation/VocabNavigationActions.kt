@@ -10,4 +10,16 @@ class VocabNavigationActions(navController: NavHostController) {
             launchSingleTop = true
         }
     }
+
+    val navigateToCards = { setId: Long? ->
+        navController.navigate("${Route.CARDS}/${setId.orNotId()}") {
+            launchSingleTop = true
+        }
+    }
+
+    val navigateToCardDetail = { setId: Long?, cardId: Long? ->
+        navController.navigate("${Route.CARD_DETAIL}/${setId.orNotId()}/${cardId.orNotId()}") {
+            launchSingleTop = true
+        }
+    }
 }

@@ -28,7 +28,7 @@ class SetsViewModel @Inject constructor(
         )
 
         viewModelScope.launch(provider.io()) {
-            setsUseCases.getSets().collectLatest {
+            setsUseCases.getSetsWithCount().collectLatest {
                 uiState.value = uiState.value.copy(
                     isLoading = false,
                     sets = it
