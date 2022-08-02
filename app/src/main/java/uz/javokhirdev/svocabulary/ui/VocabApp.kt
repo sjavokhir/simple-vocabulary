@@ -1,7 +1,9 @@
 package uz.javokhirdev.svocabulary.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,8 +19,10 @@ import uz.javokhirdev.svocabulary.core.designsystem.theme.VocabTheme
 import uz.javokhirdev.svocabulary.navigation.VocabNavHost
 
 @ExperimentalAnimationApi
-@ExperimentalMaterial3Api
 @ExperimentalLayoutApi
+@ExperimentalFoundationApi
+@ExperimentalMaterial3Api
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
 fun VocabApp() {

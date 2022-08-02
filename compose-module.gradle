@@ -49,6 +49,7 @@ dependencies {
     implementation Compose.compiler
     implementation Compose.ui
     implementation Compose.uiToolingPreview
+    implementation Compose.material
     implementation Compose.material3
     implementation Compose.material3WindowSizeClass
     implementation Compose.icons

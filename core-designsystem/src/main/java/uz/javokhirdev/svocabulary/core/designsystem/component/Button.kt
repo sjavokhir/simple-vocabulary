@@ -201,7 +201,7 @@ private fun RowScope.VocabButtonContent(
  * Vocab in Android button default values.
  */
 object VocabButtonDefaults {
-    val SmallButtonHeight = 36.dp
+    val SmallButtonHeight = 40.dp
     val NormalButtonHeight = 56.dp
     private const val DisabledButtonContainerAlpha = 0.12f
     private const val DisabledButtonContentAlpha = 0.38f

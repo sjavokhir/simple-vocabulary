@@ -31,6 +31,12 @@ class CardsViewModel @Inject constructor(
         getCards()
     }
 
+    fun handleEvent(event: CardsEvent) {
+        when (event) {
+            CardsEvent.OnClearAllClick -> clearAll()
+        }
+    }
+
     private fun getSetById() {
         viewModelScope.launch(provider.io()) {
             setsUseCases.getSetById(setId).collectLatest {
@@ -52,6 +58,18 @@ class CardsViewModel @Inject constructor(
                     isLoading = false,
                     cards = it
                 )
+            }
+        }
+    }
+
+    private fun clearAll() {
+        uiState.value = uiState.value.copy(
+            isLoading = true
+        )
+
+        viewModelScope.launch(provider.io()) {
+            cardsUseCases.deleteCardsBySetId(setId).collectLatest {
+                if (it) getCards()
             }
         }
     }
