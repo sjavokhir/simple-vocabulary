@@ -16,7 +16,7 @@ object SetsNavigation : VocabNavigationDestination {
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.setsGraph(
     navigateToSettings: () -> Unit,
-    navigateToSetDetail: () -> Unit
+    navigateToSetDetail: (Long?) -> Unit
 ) {
     composable(route = SetsNavigation.route) {
         SetsRoute(

@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import uz.javokhirdev.svocabulary.core.data.extensions.orNotId
+import uz.javokhirdev.svocabulary.feature.setdetail.presentation.navigation.SetDetailNavigation
+import uz.javokhirdev.svocabulary.feature.setdetail.presentation.navigation.setDetailGraph
 import uz.javokhirdev.svocabulary.feature.sets.presentation.navigation.SetsNavigation
 import uz.javokhirdev.svocabulary.feature.sets.presentation.navigation.setsGraph
 
@@ -31,7 +34,10 @@ fun VocabNavHost(
     ) {
         setsGraph(
             navigateToSettings = {},
-            navigateToSetDetail = {}
+            navigateToSetDetail = { navController.navigate("${SetDetailNavigation.route}/${it.orNotId()}") },
+        )
+        setDetailGraph(
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

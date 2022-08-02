@@ -26,3 +26,5 @@ include ":feature-sets"
 include ":feature-sets:data"
 include ":feature-sets:domain"
 include ":feature-sets:presentation"
+
+include ":feature-set-detail"

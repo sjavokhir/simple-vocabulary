@@ -59,6 +59,8 @@ dependencies {
     implementation(project(Modules.setsDomain))
     implementation(project(Modules.setsPresentation))
 
+    implementation(project(Modules.setDetailPresentation))
+
     implementation(Base.coreKtx)
     implementation(Base.appCompat)
 

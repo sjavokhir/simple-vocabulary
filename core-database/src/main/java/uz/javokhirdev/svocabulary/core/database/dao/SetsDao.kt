@@ -16,7 +16,7 @@ interface SetsDao {
     suspend fun getSetsWithCards(): List<SetWithCards>
 
     @Query(value = "SELECT * FROM sets WHERE set_id = :id")
-    suspend fun getSetById(id: Long): SetEntity?
+    suspend fun getSetById(id: Long?): SetEntity?
 
     /**
      * Inserts [obj] into the db if they don't exist, and ignores those that do

@@ -206,7 +206,8 @@ fun VocabTheme(
 
     CompositionLocalProvider(
         LocalGradientColors provides gradientColors,
-        LocalBackgroundTheme provides backgroundTheme
+        LocalBackgroundTheme provides backgroundTheme,
+        LocalSpacing provides Dimensions(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

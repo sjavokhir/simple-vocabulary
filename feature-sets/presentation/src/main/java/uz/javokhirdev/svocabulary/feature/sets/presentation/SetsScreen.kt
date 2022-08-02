@@ -11,13 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabExtendedFloatingActionButton
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabLoadingWheel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabTopAppBar
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
+import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.model.SetModel
 import uz.javokhirdev.svocabulary.core.ui.R
 
@@ -28,7 +28,7 @@ fun SetsRoute(
     modifier: Modifier = Modifier,
     viewModel: SetsViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit,
-    navigateToSetDetail: () -> Unit
+    navigateToSetDetail: (Long?) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -47,7 +47,7 @@ fun SetsScreen(
     modifier: Modifier,
     uiState: SetsState,
     onSettingsClick: () -> Unit,
-    onAddSetClick: () -> Unit
+    onAddSetClick: (Long?) -> Unit
 ) {
     VocabGradientBackground {
         Scaffold(
@@ -73,9 +73,9 @@ fun SetsScreen(
             },
             floatingActionButton = {
                 VocabExtendedFloatingActionButton(
-                    onClick = onAddSetClick,
-                    title = R.string.add_set,
-                    icon = VocabIcons.Add,
+                    onClick = { onAddSetClick(null) },
+                    text = stringResource(id = R.string.add_set),
+                    leadingIcon = VocabIcons.Add,
                     modifier = Modifier.windowInsetsPadding(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
                     )
@@ -96,7 +96,10 @@ fun SetsScreen(
                 } else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(uiState.sets) {
-                            SetItem(it)
+                            SetItem(
+                                model = it,
+                                onAddSetClick = onAddSetClick
+                            )
                         }
                     }
                 }
@@ -107,25 +110,33 @@ fun SetsScreen(
 
 @ExperimentalMaterial3Api
 @Composable
-fun SetItem(model: SetModel) {
+fun SetItem(
+    model: SetModel,
+    onAddSetClick: (Long?) -> Unit
+) {
+    val spacing = LocalSpacing.current
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
+                horizontal = spacing.normal,
+                vertical = spacing.small
             ),
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
-        onClick = {}
+        border = BorderStroke(
+            width = spacing.stroke,
+            color = Color.Gray.copy(alpha = 0.25f)
+        ),
+        onClick = { onAddSetClick(model.id) }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(spacing.normal)) {
             Text(
                 text = model.title.orEmpty(),
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(spacing.small))
             Text(
                 text = model.description.orEmpty(),
                 style = MaterialTheme.typography.bodyMedium

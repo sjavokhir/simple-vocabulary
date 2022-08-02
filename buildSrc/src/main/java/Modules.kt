@@ -9,4 +9,6 @@ object Modules {
     const val setsData = ":feature-sets:data"
     const val setsDomain = ":feature-sets:domain"
     const val setsPresentation = ":feature-sets:presentation"
+
+    const val setDetailPresentation = ":feature-set-detail"
 }
