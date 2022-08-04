@@ -41,7 +41,9 @@ class SetsViewModel @Inject constructor(
         setId ?: return
 
         viewModelScope.launch(provider.io()) {
-            setsUseCases.deleteSet(setId).collectLatest { getSets() }
+            setsUseCases.deleteSet(setId).collectLatest {
+                if (it) getSets()
+            }
         }
     }
 }

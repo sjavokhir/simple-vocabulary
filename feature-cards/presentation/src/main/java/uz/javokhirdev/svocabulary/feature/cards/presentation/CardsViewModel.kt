@@ -62,6 +62,16 @@ class CardsViewModel @Inject constructor(
         }
     }
 
+    fun deleteCard(cardId: Long?) {
+        cardId ?: return
+
+        viewModelScope.launch(provider.io()) {
+            cardsUseCases.deleteCard(cardId).collectLatest {
+                if (it) getCards()
+            }
+        }
+    }
+
     private fun clearAll() {
         uiState.value = uiState.value.copy(
             isLoading = true

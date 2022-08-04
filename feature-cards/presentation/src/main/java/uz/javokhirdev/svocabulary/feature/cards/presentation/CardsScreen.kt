@@ -1,28 +1,34 @@
 package uz.javokhirdev.svocabulary.feature.cards.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabDialog
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabLoadingWheel
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabTopAppBar
+import uz.javokhirdev.svocabulary.core.designsystem.component.*
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
 import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.model.CardModel
 import uz.javokhirdev.svocabulary.core.ui.R
 
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @ExperimentalLayoutApi
 @ExperimentalMaterial3Api
 @Composable
@@ -30,11 +36,51 @@ fun CardsScreen(
     modifier: Modifier = Modifier,
     viewModel: CardsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onAddCardClick: (Long?, Long?) -> Unit
+    onAddCardClick: (setId: Long?, cardId: Long?) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val spacing = LocalSpacing.current
-    val openDialog = remember { mutableStateOf(false) }
+    val clipboard = LocalClipboardManager.current
+    val listState = rememberLazyListState()
+    val isClearAll = remember { mutableStateOf(false) }
+    val lastCardModel = remember { mutableStateOf(CardModel()) }
+
+    if (lastCardModel.value.id != null) {
+        VocabActionSheet(
+            onDismissClick = { lastCardModel.value = CardModel() },
+            onCopyClick = {
+                clipboard.setText(
+                    AnnotatedString(
+                        "${lastCardModel.value.term.orEmpty()} - ${lastCardModel.value.definition.orEmpty()}"
+                    )
+                )
+                lastCardModel.value = CardModel()
+            },
+            onListenClick = {},
+            onEditClick = {
+                onAddCardClick(viewModel.setId, lastCardModel.value.id)
+                lastCardModel.value = CardModel()
+            },
+            onDeleteClick = {
+                viewModel.deleteCard(lastCardModel.value.id)
+                lastCardModel.value = CardModel()
+            }
+        )
+    }
+
+    if (isClearAll.value) {
+        VocabDialog(
+            title = stringResource(id = R.string.clear_all),
+            text = stringResource(id = R.string.clear_all_description),
+            positiveText = stringResource(id = R.string.delete),
+            negativeText = stringResource(id = R.string.cancel),
+            onConfirmClick = {
+                viewModel.handleEvent(CardsEvent.OnClearAllClick)
+                isClearAll.value = false
+            },
+            onDismissClick = { isClearAll.value = false }
+        )
+    }
 
     VocabGradientBackground {
         Scaffold(
@@ -51,7 +97,7 @@ fun CardsScreen(
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
-                        IconButton(onClick = { openDialog.value = true }) {
+                        IconButton(onClick = { isClearAll.value = true }) {
                             Icon(
                                 imageVector = VocabIcons.Clear,
                                 contentDescription = stringResource(id = R.string.clear_all),
@@ -66,6 +112,24 @@ fun CardsScreen(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                     )
                 )
+            },
+            floatingActionButton = {
+                if (uiState.cards.isNotEmpty()) {
+                    AnimatedVisibility(
+                        visible = listState.isScrollingUp(),
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                    ) {
+                        VocabExtendedFloatingActionButton(
+                            onClick = { },
+                            text = stringResource(id = R.string.flashcards),
+                            leadingIcon = VocabIcons.FitnessCenter,
+                            modifier = Modifier.windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                            )
+                        )
+                    }
+                }
             },
             containerColor = Color.Transparent
         ) { innerPadding ->
@@ -89,7 +153,8 @@ fun CardsScreen(
                         items(uiState.cards) {
                             CardItem(
                                 model = it,
-                                onCardClick = { },
+                                onCardClick = {},
+                                onCardLongClick = { model -> lastCardModel.value = model }
                             )
                         }
                         item { Spacer(modifier = Modifier.height(spacing.small)) }
@@ -102,43 +167,35 @@ fun CardsScreen(
                     )
                 }
             }
-
-            if (openDialog.value) {
-                VocabDialog(
-                    title = stringResource(id = R.string.clear_all),
-                    text = stringResource(id = R.string.clear_all_description),
-                    positiveText = stringResource(id = R.string.delete),
-                    negativeText = stringResource(id = R.string.cancel),
-                    onConfirmClick = {
-                        openDialog.value = false
-                        viewModel.handleEvent(CardsEvent.OnClearAllClick)
-                    },
-                    onDismissClick = {
-                        openDialog.value = false
-                    }
-                )
-            }
         }
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun CardItem(
     model: CardModel,
-    onCardClick: (Long?) -> Unit
+    onCardClick: (Long?) -> Unit,
+    onCardLongClick: (CardModel) -> Unit,
 ) {
     val spacing = LocalSpacing.current
 
-    Column(modifier = Modifier.padding(vertical = spacing.small)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = spacing.small)
+            .combinedClickable(
+                onClick = { onCardClick(model.id) },
+                onLongClick = { onCardLongClick(model) },
+            )
+    ) {
         Divider(
             color = Color.LightGray.copy(alpha = 0.25f),
             thickness = spacing.stroke
         )
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface,
-            onClick = { onCardClick(model.id) }
+            color = MaterialTheme.colorScheme.surface
         ) {
             Column(
                 modifier = Modifier
@@ -165,4 +222,22 @@ fun CardItem(
             thickness = spacing.stroke
         )
     }
+}
+
+@Composable
+private fun LazyListState.isScrollingUp(): Boolean {
+    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
+    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
+    return remember(this) {
+        derivedStateOf {
+            if (previousIndex != firstVisibleItemIndex) {
+                previousIndex > firstVisibleItemIndex
+            } else {
+                previousScrollOffset >= firstVisibleItemScrollOffset
+            }.also {
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+            }
+        }
+    }.value
 }
