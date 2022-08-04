@@ -33,6 +33,7 @@ class CardsViewModel @Inject constructor(
 
     fun handleEvent(event: CardsEvent) {
         when (event) {
+            is CardsEvent.OnDeleteClick -> deleteCard(event.cardId)
             CardsEvent.OnClearAllClick -> clearAll()
         }
     }
@@ -62,7 +63,7 @@ class CardsViewModel @Inject constructor(
         }
     }
 
-    fun deleteCard(cardId: Long?) {
+    private fun deleteCard(cardId: Long?) {
         cardId ?: return
 
         viewModelScope.launch(provider.io()) {

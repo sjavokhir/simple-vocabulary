@@ -31,6 +31,7 @@ object VocabIcons {
     val ThumbUp = Icons.Rounded.ThumbUp
     val ThumbDown = Icons.Rounded.ThumbDown
     val VolumeUp = Icons.Rounded.VolumeUp
+    val Code = Icons.Rounded.Code
 }
 
 /**

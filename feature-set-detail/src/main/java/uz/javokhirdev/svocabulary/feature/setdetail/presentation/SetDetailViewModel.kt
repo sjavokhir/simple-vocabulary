@@ -61,7 +61,7 @@ class SetDetailViewModel @Inject constructor(
         uiState.value = uiState.value.copy(
             title = title,
             description = description,
-            isButtonEnabled = !title.isNullOrEmpty() && !description.isNullOrEmpty(),
+            isButtonEnabled = !title.isNullOrEmpty(),
         )
     }
 

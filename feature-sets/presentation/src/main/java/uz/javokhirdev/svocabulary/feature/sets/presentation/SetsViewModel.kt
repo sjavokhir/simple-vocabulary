@@ -22,6 +22,12 @@ class SetsViewModel @Inject constructor(
         getSets()
     }
 
+    fun handleEvent(event: SetsEvent) {
+        when (event) {
+            is SetsEvent.OnDeleteClick -> deleteSet(event.setId)
+        }
+    }
+
     private fun getSets() {
         uiState.value = uiState.value.copy(
             isLoading = true
@@ -37,13 +43,11 @@ class SetsViewModel @Inject constructor(
         }
     }
 
-    fun deleteSet(setId: Long?) {
+    private fun deleteSet(setId: Long?) {
         setId ?: return
 
         viewModelScope.launch(provider.io()) {
-            setsUseCases.deleteSet(setId).collectLatest {
-                if (it) getSets()
-            }
+            setsUseCases.deleteSet(setId).collectLatest { if (it) getSets() }
         }
     }
 }

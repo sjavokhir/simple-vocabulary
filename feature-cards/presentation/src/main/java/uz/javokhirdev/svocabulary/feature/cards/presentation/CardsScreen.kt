@@ -62,7 +62,7 @@ fun CardsScreen(
                 lastCardModel.value = CardModel()
             },
             onDeleteClick = {
-                viewModel.deleteCard(lastCardModel.value.id)
+                viewModel.handleEvent(CardsEvent.OnDeleteClick(lastCardModel.value.id))
                 lastCardModel.value = CardModel()
             }
         )

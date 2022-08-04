@@ -22,4 +22,10 @@ class VocabNavigationActions(navController: NavHostController) {
             launchSingleTop = true
         }
     }
+
+    val navigateToSettings = {
+        navController.navigate(Route.SETTINGS) {
+            launchSingleTop = true
+        }
+    }
 }
