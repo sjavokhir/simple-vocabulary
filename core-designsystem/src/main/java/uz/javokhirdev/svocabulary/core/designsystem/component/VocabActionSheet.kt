@@ -1,101 +1,102 @@
 package uz.javokhirdev.svocabulary.core.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetScaffoldState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
 import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.ui.R
 
-@ExperimentalMaterialApi
 @Composable
 fun VocabActionSheet(
     modifier: Modifier = Modifier,
-    scaffoldState: BottomSheetScaffoldState,
-    content: @Composable (PaddingValues) -> Unit,
+    onDismissClick: () -> Unit,
+    onCopyClick: (() -> Unit)? = null,
+    onListenClick: (() -> Unit)? = null,
+    onEditClick: (() -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null,
 ) {
-    val spacing = LocalSpacing.current
-
-    BottomSheetScaffold(
-        modifier = modifier,
-        scaffoldState = scaffoldState,
-        sheetElevation = 56.dp,
-        sheetShape = RoundedCornerShape(
-            topStart = spacing.normal,
-            topEnd = spacing.normal
-        ),
-        sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-        sheetContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = spacing.small)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = spacing.normal,
-                            topEnd = spacing.normal
-                        )
+    Dialog(onDismissRequest = onDismissClick) {
+        Surface(
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(color = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (onCopyClick != null) {
+                    ActionItem(
+                        text = stringResource(id = R.string.copy),
+                        leadingIcon = VocabIcons.Copy,
+                        onClick = onCopyClick
                     )
-            ) {
-                ActionItem(
-                    text = stringResource(id = R.string.copy),
-                    imageVector = VocabIcons.Copy
-                )
-                ActionItem(
-                    text = stringResource(id = R.string.listen),
-                    imageVector = VocabIcons.VolumeUp
-                )
-                ActionItem(
-                    text = stringResource(id = R.string.edit),
-                    imageVector = VocabIcons.Edit
-                )
-                ActionItem(
-                    text = stringResource(id = R.string.delete),
-                    imageVector = VocabIcons.Delete
-                )
+                }
+                if (onListenClick != null) {
+                    ActionItem(
+                        text = stringResource(id = R.string.listen),
+                        leadingIcon = VocabIcons.VolumeUp,
+                        onClick = onListenClick
+                    )
+                }
+                if (onEditClick != null) {
+                    ActionItem(
+                        text = stringResource(id = R.string.edit),
+                        leadingIcon = VocabIcons.Edit,
+                        onClick = onEditClick
+                    )
+                }
+                if (onDeleteClick != null) {
+                    ActionItem(
+                        text = stringResource(id = R.string.delete),
+                        leadingIcon = VocabIcons.Delete,
+                        onClick = onDeleteClick,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
-        },
-        sheetPeekHeight = 0.dp
-    ) {
-        content(it)
+        }
     }
 }
 
 @Composable
 fun ActionItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
     text: String,
-    imageVector: ImageVector
+    leadingIcon: ImageVector,
+    color: Color = MaterialTheme.colorScheme.onSurface
 ) {
     val spacing = LocalSpacing.current
+
     Row(
-        modifier = Modifier
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small)
-            .background(color = MaterialTheme.colorScheme.surface)
+            .clickable { onClick() }
             .padding(spacing.normal)
     ) {
         Icon(
-            imageVector = imageVector,
+            imageVector = leadingIcon,
             contentDescription = text,
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = color
         )
         Spacer(modifier = Modifier.width(spacing.normal))
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = color
         )
     }
 }

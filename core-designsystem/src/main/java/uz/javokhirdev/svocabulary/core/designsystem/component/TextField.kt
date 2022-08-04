@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 
 @Composable
@@ -43,7 +44,10 @@ fun VocabTextField(
             onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(spacing.normal),
+                .padding(
+                    horizontal = spacing.normal,
+                    vertical = 18.dp
+                ),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface
             )

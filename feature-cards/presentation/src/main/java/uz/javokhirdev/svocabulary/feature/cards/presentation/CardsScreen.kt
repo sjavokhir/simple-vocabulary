@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabDialog
 import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
@@ -148,12 +149,13 @@ fun CardItem(
             ) {
                 Text(
                     text = model.term.orEmpty(),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.height(spacing.extraSmall))
                 Text(
                     text = model.definition.orEmpty(),
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color.Gray
                 )
             }

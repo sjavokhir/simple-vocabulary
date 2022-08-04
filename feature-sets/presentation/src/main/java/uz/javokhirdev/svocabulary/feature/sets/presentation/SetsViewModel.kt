@@ -36,4 +36,12 @@ class SetsViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteSet(setId: Long?) {
+        setId ?: return
+
+        viewModelScope.launch(provider.io()) {
+            setsUseCases.deleteSet(setId).collectLatest { getSets() }
+        }
+    }
 }

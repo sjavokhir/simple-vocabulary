@@ -12,7 +12,7 @@ fun VocabDialog(
     positiveText: String,
     negativeText: String,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onDismissClick: () -> Unit
 ) {
     AlertDialog(
         // Dismiss the dialog when the user clicks outside the dialog or on the back
