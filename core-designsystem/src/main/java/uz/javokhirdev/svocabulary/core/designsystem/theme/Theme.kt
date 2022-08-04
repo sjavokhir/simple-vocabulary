@@ -164,7 +164,7 @@ val DarkAndroidBackgroundTheme = BackgroundTheme(color = Color.Black)
 @Composable
 fun VocabTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     androidTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -206,7 +206,8 @@ fun VocabTheme(
 
     CompositionLocalProvider(
         LocalGradientColors provides gradientColors,
-        LocalBackgroundTheme provides backgroundTheme
+        LocalBackgroundTheme provides backgroundTheme,
+        LocalSpacing provides Dimensions(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

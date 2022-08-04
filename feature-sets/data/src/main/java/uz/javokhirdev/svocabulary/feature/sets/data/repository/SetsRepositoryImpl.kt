@@ -1,15 +1,14 @@
 package uz.javokhirdev.svocabulary.feature.sets.data.repository
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import uz.javokhirdev.svocabulary.core.data.DispatcherProvider
 import uz.javokhirdev.svocabulary.core.database.dao.CardsDao
 import uz.javokhirdev.svocabulary.core.database.dao.SetsDao
 import uz.javokhirdev.svocabulary.core.database.model.asEntity
 import uz.javokhirdev.svocabulary.core.database.model.asSetModel
+import uz.javokhirdev.svocabulary.core.database.model.asSetWithCardsModel
 import uz.javokhirdev.svocabulary.core.model.SetModel
+import uz.javokhirdev.svocabulary.core.model.SetWithCardsModel
 import uz.javokhirdev.svocabulary.feature.sets.domain.repository.SetsRepository
 
 class SetsRepositoryImpl(
@@ -18,24 +17,18 @@ class SetsRepositoryImpl(
     private val provider: DispatcherProvider
 ) : SetsRepository {
 
-    override fun getSets(): Flow<List<SetModel>> = flow {
-        val sets = setsDao.getSets().map { it.asSetModel() }
+    override fun getSetsWithCount(): Flow<List<SetWithCardsModel>> {
+        return setsDao.getSetsWithCount().map { list ->
+            list.map { it.asSetWithCardsModel() }
+        }
+    }
 
-        emit(sets)
-    }.catch {
-        emit(emptyList())
-    }.flowOn(provider.io())
+    override fun getSetById(setId: Long): Flow<SetModel> {
+        return setsDao.getSetById(setId).map { it.asSetModel() }
+    }
 
-    override fun getSetById(id: Long): Flow<SetModel> = flow {
-        val model = setsDao.getSetById(id).asSetModel()
-
-        emit(model)
-    }.catch {
-        emit(SetModel())
-    }.flowOn(provider.io())
-
-    override suspend fun upsertSet(obj: SetModel): Flow<Boolean> = flow {
-        setsDao.upsertSet(obj.asEntity())
+    override suspend fun upsertSet(model: SetModel): Flow<Boolean> = flow {
+        setsDao.upsertSet(model.asEntity())
 
         emit(true)
     }.catch {

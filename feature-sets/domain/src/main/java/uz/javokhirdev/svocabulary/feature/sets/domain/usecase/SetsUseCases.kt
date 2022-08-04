@@ -1,7 +1,7 @@
 package uz.javokhirdev.svocabulary.feature.sets.domain.usecase
 
 data class SetsUseCases(
-    val getSets: GetSets,
+    val getSetsWithCount: GetSetsWithCount,
     val getSetById: GetSetById,
     val upsertSet: UpsertSet,
     val deleteSet: DeleteSet,

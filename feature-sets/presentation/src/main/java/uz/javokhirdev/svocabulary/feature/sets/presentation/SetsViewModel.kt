@@ -23,10 +23,12 @@ class SetsViewModel @Inject constructor(
     }
 
     private fun getSets() {
-        setLoading()
+        uiState.value = uiState.value.copy(
+            isLoading = true
+        )
 
         viewModelScope.launch(provider.io()) {
-            setsUseCases.getSets().collectLatest {
+            setsUseCases.getSetsWithCount().collectLatest {
                 uiState.value = uiState.value.copy(
                     isLoading = false,
                     sets = it
@@ -35,9 +37,13 @@ class SetsViewModel @Inject constructor(
         }
     }
 
-    private fun setLoading() {
-        uiState.value = uiState.value.copy(
-            isLoading = true
-        )
+    fun deleteSet(setId: Long?) {
+        setId ?: return
+
+        viewModelScope.launch(provider.io()) {
+            setsUseCases.deleteSet(setId).collectLatest {
+                if (it) getSets()
+            }
+        }
     }
 }

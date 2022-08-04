@@ -1,22 +1,26 @@
 package uz.javokhirdev.svocabulary.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import uz.javokhirdev.svocabulary.feature.sets.presentation.navigation.SetsNavigation
-import uz.javokhirdev.svocabulary.feature.sets.presentation.navigation.setsGraph
+import androidx.navigation.navArgument
+import uz.javokhirdev.svocabulary.core.data.Extras
+import uz.javokhirdev.svocabulary.feature.carddetail.presentation.CardDetailScreen
+import uz.javokhirdev.svocabulary.feature.cards.presentation.CardsScreen
+import uz.javokhirdev.svocabulary.feature.setdetail.presentation.SetDetailScreen
+import uz.javokhirdev.svocabulary.feature.sets.presentation.SetsScreen
 
-/**
- * Top-level navigation graph. Navigation is organized as explained at
- * https://d.android.com/jetpack/compose/nav-adaptive
- *
- * The navigation graph defined in this file defines the different top level routes. Navigation
- * within each route is handled using state and Back Handlers.
- */
+@ExperimentalFoundationApi
+@ExperimentalAnimationApi
 @ExperimentalLayoutApi
 @ExperimentalMaterial3Api
 @Composable
@@ -24,14 +28,49 @@ fun VocabNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
+    val navActions = remember(navController) {
+        VocabNavigationActions(navController)
+    }
+
     NavHost(
         navController = navController,
-        startDestination = SetsNavigation.route,
+        startDestination = Route.SETS,
         modifier = modifier,
     ) {
-        setsGraph(
-            navigateToSettings = {},
-            navigateToSetDetail = {}
-        )
+        composable(route = Route.SETS) {
+            SetsScreen(
+                onSettingsClick = {},
+                onAddSetClick = navActions.navigateToSetDetail,
+                onSetClick = navActions.navigateToCards
+            )
+        }
+        composable(
+            route = "${Route.SET_DETAIL}/{${Extras.SET_ID}}",
+            arguments = listOf(navArgument(Extras.SET_ID) { type = NavType.LongType })
+        ) {
+            SetDetailScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = "${Route.CARDS}/{${Extras.SET_ID}}",
+            arguments = listOf(navArgument(Extras.SET_ID) { type = NavType.LongType })
+        ) {
+            CardsScreen(
+                onBackClick = { navController.popBackStack() },
+                onAddCardClick = navActions.navigateToCardDetail
+            )
+        }
+        composable(
+            route = "${Route.CARD_DETAIL}/{${Extras.SET_ID}}/{${Extras.CARD_ID}}",
+            arguments = listOf(
+                navArgument(Extras.SET_ID) { type = NavType.LongType },
+                navArgument(Extras.CARD_ID) { type = NavType.LongType },
+            )
+        ) {
+            CardDetailScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }

@@ -15,7 +15,7 @@ object SetsDomainModule {
     @[Provides ViewModelScoped]
     fun provideSetsUseCases(repository: SetsRepository): SetsUseCases {
         return SetsUseCases(
-            getSets = GetSets(repository),
+            getSetsWithCount = GetSetsWithCount(repository),
             getSetById = GetSetById(repository),
             upsertSet = UpsertSet(repository),
             deleteSet = DeleteSet(repository),

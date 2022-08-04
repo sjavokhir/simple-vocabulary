@@ -59,6 +59,14 @@ dependencies {
     implementation(project(Modules.setsDomain))
     implementation(project(Modules.setsPresentation))
 
+    implementation(project(Modules.setDetailPresentation))
+
+    implementation(project(Modules.cardsData))
+    implementation(project(Modules.cardsDomain))
+    implementation(project(Modules.cardsPresentation))
+
+    implementation(project(Modules.cardDetailPresentation))
+
     implementation(Base.coreKtx)
     implementation(Base.appCompat)
 

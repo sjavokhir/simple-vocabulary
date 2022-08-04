@@ -7,5 +7,5 @@ class UpsertSet(
     private val repository: SetsRepository
 ) {
 
-    suspend operator fun invoke(obj: SetModel) = repository.upsertSet(obj)
+    suspend operator fun invoke(model: SetModel) = repository.upsertSet(model)
 }

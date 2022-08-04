@@ -1,54 +1,74 @@
 package uz.javokhirdev.svocabulary.feature.sets.presentation
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabExtendedFloatingActionButton
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabGradientBackground
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabLoadingWheel
-import uz.javokhirdev.svocabulary.core.designsystem.component.VocabTopAppBar
+import uz.javokhirdev.svocabulary.core.data.extensions.orZero
+import uz.javokhirdev.svocabulary.core.designsystem.component.*
 import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
+import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.model.SetModel
+import uz.javokhirdev.svocabulary.core.model.SetWithCardsModel
 import uz.javokhirdev.svocabulary.core.ui.R
 
-@ExperimentalLayoutApi
-@ExperimentalMaterial3Api
-@Composable
-fun SetsRoute(
-    modifier: Modifier = Modifier,
-    viewModel: SetsViewModel = hiltViewModel(),
-    navigateToSettings: () -> Unit,
-    navigateToSetDetail: () -> Unit
-) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    SetsScreen(
-        modifier = modifier,
-        uiState = uiState,
-        onSettingsClick = navigateToSettings,
-        onAddSetClick = navigateToSetDetail
-    )
-}
-
+@ExperimentalFoundationApi
+@ExperimentalAnimationApi
 @ExperimentalLayoutApi
 @ExperimentalMaterial3Api
 @Composable
 fun SetsScreen(
-    modifier: Modifier,
-    uiState: SetsState,
+    modifier: Modifier = Modifier,
+    viewModel: SetsViewModel = hiltViewModel(),
     onSettingsClick: () -> Unit,
-    onAddSetClick: () -> Unit
+    onSetClick: (Long?) -> Unit,
+    onAddSetClick: (Long?) -> Unit,
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+    val spacing = LocalSpacing.current
+    val clipboard = LocalClipboardManager.current
+    val listState = rememberLazyListState()
+    val lastSetModel = remember { mutableStateOf(SetModel()) }
+
+    if (lastSetModel.value.id != null) {
+        VocabActionSheet(
+            onDismissClick = { lastSetModel.value = SetModel() },
+            onCopyClick = {
+                clipboard.setText(AnnotatedString(lastSetModel.value.title.orEmpty()))
+                lastSetModel.value = SetModel()
+            },
+            onEditClick = {
+                onAddSetClick(lastSetModel.value.id)
+                lastSetModel.value = SetModel()
+            },
+            onDeleteClick = {
+                viewModel.deleteSet(lastSetModel.value.id)
+                lastSetModel.value = SetModel()
+            }
+        )
+    }
+
     VocabGradientBackground {
         Scaffold(
             topBar = {
@@ -72,16 +92,22 @@ fun SetsScreen(
                 )
             },
             floatingActionButton = {
-                VocabExtendedFloatingActionButton(
-                    onClick = onAddSetClick,
-                    title = R.string.add_set,
-                    icon = VocabIcons.Add,
-                    modifier = Modifier.windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                AnimatedVisibility(
+                    visible = listState.isScrollingUp(),
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                ) {
+                    VocabExtendedFloatingActionButton(
+                        onClick = { onAddSetClick(null) },
+                        text = stringResource(id = R.string.add_set),
+                        leadingIcon = VocabIcons.Add,
+                        modifier = Modifier.windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                        )
                     )
-                )
+                }
             },
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
         ) { innerPadding ->
             Box(
                 modifier = modifier
@@ -93,43 +119,113 @@ fun SetsScreen(
                     VocabLoadingWheel(
                         modifier = Modifier.align(Alignment.Center)
                     )
-                } else {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                } else if (uiState.sets.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                            ),
+                        state = listState
+                    ) {
+                        item { Spacer(modifier = Modifier.height(spacing.small)) }
                         items(uiState.sets) {
-                            SetItem(it)
+                            SetItem(
+                                model = it,
+                                onSetClick = onSetClick,
+                                onSetLongClick = { model -> lastSetModel.value = model }
+                            )
                         }
+                        item { Spacer(modifier = Modifier.height(spacing.small)) }
                     }
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.no_data),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-fun SetItem(model: SetModel) {
+fun SetItem(
+    model: SetWithCardsModel,
+    modifier: Modifier = Modifier,
+    onSetClick: (Long?) -> Unit,
+    onSetLongClick: (SetModel) -> Unit,
+) {
+    val spacing = LocalSpacing.current
+
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            ),
-        shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
-        onClick = {}
+                horizontal = spacing.normal,
+                vertical = spacing.small
+            )
+            .clip(MaterialTheme.shapes.small)
+            .border(
+                width = spacing.stroke,
+                color = Color.Gray.copy(alpha = 0.25f),
+                shape = MaterialTheme.shapes.small
+            )
+            .background(color = MaterialTheme.colorScheme.surface)
+            .combinedClickable(
+                onClick = { onSetClick(model.set?.id) },
+                onLongClick = { model.set?.let { onSetLongClick(it) } },
+            )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = model.title.orEmpty(),
-                style = MaterialTheme.typography.titleMedium
+        Column(
+            modifier = Modifier.padding(
+                horizontal = spacing.normal,
+                vertical = spacing.extraNormal
             )
-            Spacer(modifier = Modifier.height(8.dp))
+        ) {
             Text(
-                text = model.description.orEmpty(),
-                style = MaterialTheme.typography.bodyMedium
+                text = model.set?.title.orEmpty(),
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp
             )
+            Spacer(modifier = Modifier.height(spacing.extraSmall))
+            Row(horizontalArrangement = Arrangement.End) {
+                Text(
+                    text = model.set?.description.orEmpty(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(spacing.normal))
+                Text(
+                    text = model.cardsCount.orZero().toString(),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun LazyListState.isScrollingUp(): Boolean {
+    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
+    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
+    return remember(this) {
+        derivedStateOf {
+            if (previousIndex != firstVisibleItemIndex) {
+                previousIndex > firstVisibleItemIndex
+            } else {
+                previousScrollOffset >= firstVisibleItemScrollOffset
+            }.also {
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+            }
+        }
+    }.value
 }

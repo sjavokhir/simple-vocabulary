@@ -30,3 +30,10 @@ fun CardEntity?.asCardModel() = CardModel(
     term = this?.term,
     definition = this?.definition
 )
+
+fun CardModel.asEntity() = CardEntity(
+    id = this.id ?: 0L,
+    setId = this.setId,
+    term = this.term,
+    definition = this.definition
+)
