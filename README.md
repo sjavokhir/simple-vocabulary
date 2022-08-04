@@ -21,16 +21,16 @@ projects [GitHub](https://github.com/javokhirsavriev/) .
 </div>
 <br>
 <div align="left">
-    <a href = "https://github.com/javokhirsavriev/photoplay/network/">
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/network/">
         <img src = "https://img.shields.io/github/forks/javokhirsavriev/photoplay" />
     </a>
-    <a href = "https://github.com/javokhirsavriev/photoplay/stargazers">
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/stargazers">
         <img src = "https://img.shields.io/github/stars/javokhirsavriev/photoplay" />
     </a>
-    <a href = "https://github.com/javokhirsavriev/photoplay/issues">
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/issues">
         <img src = "https://img.shields.io/github/issues/javokhirsavriev/photoplay" />
     </a>  
-    <a href = "https://github.com/javokhirsavriev/photoplay/blob/master/LICENSE">
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/blob/master/LICENSE">
         <img src = "https://img.shields.io/github/license/javokhirsavriev/photoplay" />
     </a>
     <a href="">
