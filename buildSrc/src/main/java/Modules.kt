@@ -17,4 +17,6 @@ object Modules {
     const val cardsPresentation = ":feature-cards:presentation"
 
     const val cardDetailPresentation = ":feature-card-detail"
+
+    const val settings = ":feature-settings"
 }

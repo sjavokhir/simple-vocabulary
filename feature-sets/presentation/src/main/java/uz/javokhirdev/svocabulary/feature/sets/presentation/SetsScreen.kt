@@ -63,7 +63,7 @@ fun SetsScreen(
                 lastSetModel.value = SetModel()
             },
             onDeleteClick = {
-                viewModel.deleteSet(lastSetModel.value.id)
+                viewModel.handleEvent(SetsEvent.OnDeleteClick(lastSetModel.value.id))
                 lastSetModel.value = SetModel()
             }
         )

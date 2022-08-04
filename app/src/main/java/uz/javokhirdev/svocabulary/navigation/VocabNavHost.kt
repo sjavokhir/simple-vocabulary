@@ -18,6 +18,7 @@ import uz.javokhirdev.svocabulary.feature.carddetail.presentation.CardDetailScre
 import uz.javokhirdev.svocabulary.feature.cards.presentation.CardsScreen
 import uz.javokhirdev.svocabulary.feature.setdetail.presentation.SetDetailScreen
 import uz.javokhirdev.svocabulary.feature.sets.presentation.SetsScreen
+import uz.javokhirdev.svocabulary.feature.settings.presentation.SettingsScreen
 
 @ExperimentalFoundationApi
 @ExperimentalAnimationApi
@@ -39,7 +40,7 @@ fun VocabNavHost(
     ) {
         composable(route = Route.SETS) {
             SetsScreen(
-                onSettingsClick = {},
+                onSettingsClick = navActions.navigateToSettings,
                 onAddSetClick = navActions.navigateToSetDetail,
                 onSetClick = navActions.navigateToCards
             )
@@ -69,6 +70,11 @@ fun VocabNavHost(
             )
         ) {
             CardDetailScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(route = Route.SETTINGS) {
+            SettingsScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }

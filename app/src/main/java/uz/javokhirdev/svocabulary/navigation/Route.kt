@@ -6,4 +6,6 @@ object Route {
 
     const val CARDS = "cards"
     const val CARD_DETAIL = "card_detail"
+
+    const val SETTINGS = "settings"
 }

@@ -35,3 +35,5 @@ include ":feature-cards:domain"
 include ":feature-cards:presentation"
 
 include ":feature-card-detail"
+
+include ":feature-settings"
