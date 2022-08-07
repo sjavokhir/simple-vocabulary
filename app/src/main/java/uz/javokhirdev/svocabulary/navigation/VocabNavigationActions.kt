@@ -23,6 +23,12 @@ class VocabNavigationActions(navController: NavHostController) {
         }
     }
 
+    val navigateToFlashcards = { setId: Long? ->
+        navController.navigate("${Route.FLASHCARDS}/${setId.orNotId()}") {
+            launchSingleTop = true
+        }
+    }
+
     val navigateToSettings = {
         navController.navigate(Route.SETTINGS) {
             launchSingleTop = true

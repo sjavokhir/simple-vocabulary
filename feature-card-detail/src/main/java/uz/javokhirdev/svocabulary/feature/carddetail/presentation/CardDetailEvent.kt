@@ -4,5 +4,5 @@ sealed class CardDetailEvent {
     data class TermChanged(val term: String) : CardDetailEvent()
     data class DefinitionChanged(val definition: String) : CardDetailEvent()
 
-    object OnSaveClick : CardDetailEvent()
+    object SaveClick : CardDetailEvent()
 }

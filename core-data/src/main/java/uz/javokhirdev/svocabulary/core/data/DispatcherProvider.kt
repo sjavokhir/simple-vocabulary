@@ -7,5 +7,6 @@ import javax.inject.Singleton
 @Singleton
 class DispatcherProvider @Inject constructor() {
 
+    fun main() = Dispatchers.Main
     fun io() = Dispatchers.IO
 }

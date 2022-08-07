@@ -4,5 +4,5 @@ sealed class SetDetailEvent {
     data class TitleChanged(val title: String) : SetDetailEvent()
     data class DescriptionChanged(val description: String) : SetDetailEvent()
 
-    object OnSaveClick : SetDetailEvent()
+    object SaveClick : SetDetailEvent()
 }

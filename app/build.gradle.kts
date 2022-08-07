@@ -66,6 +66,7 @@ dependencies {
     implementation(project(Modules.cardDetailPresentation))
 
     implementation(project(Modules.settings))
+    implementation(project(Modules.flashcards))
 
     implementation(Base.coreKtx)
     implementation(Base.appCompat)

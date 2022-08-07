@@ -22,16 +22,16 @@ projects [GitHub](https://github.com/javokhirsavriev/) .
 <br>
 <div align="left">
     <a href = "https://github.com/javokhirsavriev/simple-vocabulary/network/">
-        <img src = "https://img.shields.io/github/forks/javokhirsavriev/photoplay" />
+        <img src = "https://img.shields.io/github/forks/javokhirsavriev/simple-vocabulary" />
     </a>
     <a href = "https://github.com/javokhirsavriev/simple-vocabulary/stargazers">
-        <img src = "https://img.shields.io/github/stars/javokhirsavriev/photoplay" />
+        <img src = "https://img.shields.io/github/stars/javokhirsavriev/simple-vocabulary" />
     </a>
     <a href = "https://github.com/javokhirsavriev/simple-vocabulary/issues">
-        <img src = "https://img.shields.io/github/issues/javokhirsavriev/photoplay" />
+        <img src = "https://img.shields.io/github/issues/javokhirsavriev/simple-vocabulary" />
     </a>  
     <a href = "https://github.com/javokhirsavriev/simple-vocabulary/blob/master/LICENSE">
-        <img src = "https://img.shields.io/github/license/javokhirsavriev/photoplay" />
+        <img src = "https://img.shields.io/github/license/javokhirsavriev/simple-vocabulary" />
     </a>
     <a href="">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>

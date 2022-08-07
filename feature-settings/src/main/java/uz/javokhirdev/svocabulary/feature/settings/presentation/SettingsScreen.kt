@@ -1,14 +1,11 @@
 package uz.javokhirdev.svocabulary.feature.settings.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uz.javokhirdev.svocabulary.core.data.extensions.sendMail
 import uz.javokhirdev.svocabulary.core.data.extensions.shareApp
@@ -30,26 +29,25 @@ import uz.javokhirdev.svocabulary.core.ui.R
 @ExperimentalMaterial3Api
 @Composable
 fun SettingsScreen(
-    modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val spacing = LocalSpacing.current
-    val uiState = viewModel.uiState.collectAsState().value
-    val isReset = remember { mutableStateOf(false) }
+    val uiState = viewModel.uiState
 
-    if (isReset.value) {
+    if (uiState.isOpenResetDialog) {
         VocabDialog(
             title = stringResource(id = R.string.reset_title),
             text = stringResource(id = R.string.reset_description),
             positiveText = stringResource(id = R.string.reset),
             negativeText = stringResource(id = R.string.cancel),
             onConfirmClick = {
-                viewModel.handleEvent(SettingsEvent.OnResetClick)
-                isReset.value = false
+                viewModel.handleEvent(SettingsEvent.ResetClick)
             },
-            onDismissClick = { isReset.value = false }
+            onDismissClick = {
+                viewModel.handleEvent(SettingsEvent.OnResetDialog(false))
+            }
         )
     }
 
@@ -71,10 +69,13 @@ fun SettingsScreen(
             containerColor = Color.Transparent
         ) { innerPadding ->
             BoxWithConstraints(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                    )
             ) {
                 Column(
                     modifier = Modifier
@@ -82,33 +83,45 @@ fun SettingsScreen(
                         .padding(spacing.normal)
                 ) {
                     SettingsItem(
-                        onClick = { viewModel.handleEvent(SettingsEvent.OnImportClick) },
+                        onClick = { viewModel.handleEvent(SettingsEvent.ImportClick) },
                         text = stringResource(id = R.string.import_data),
-                        leadingIcon = VocabIcons.Import
+                        leadingIcon = VocabIcons.Import,
+                        topEnd = spacing.small,
+                        topStart = spacing.small
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
                     SettingsItem(
-                        onClick = { viewModel.handleEvent(SettingsEvent.OnExportClick) },
+                        onClick = { viewModel.handleEvent(SettingsEvent.ExportClick) },
                         text = stringResource(id = R.string.export_data),
-                        leadingIcon = VocabIcons.Export
+                        leadingIcon = VocabIcons.Export,
+                        bottomEnd = spacing.small,
+                        bottomStart = spacing.small
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
+                    Spacer(Modifier.height(spacing.normal))
                     SettingsItem(
-                        onClick = { isReset.value = true },
+                        onClick = {
+                            viewModel.handleEvent(SettingsEvent.OnResetDialog(true))
+                        },
                         text = stringResource(id = R.string.reset_progress),
-                        leadingIcon = VocabIcons.Refresh
+                        leadingIcon = VocabIcons.Refresh,
+                        topEnd = spacing.small,
+                        topStart = spacing.small,
+                        bottomEnd = spacing.small,
+                        bottomStart = spacing.small
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
+                    Spacer(Modifier.height(spacing.normal))
                     SettingsItem(
                         onClick = { context.sendMail() },
                         text = stringResource(id = R.string.contact_developer),
-                        leadingIcon = VocabIcons.Code
+                        leadingIcon = VocabIcons.Code,
+                        topEnd = spacing.small,
+                        topStart = spacing.small,
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
                     SettingsItem(
                         onClick = { context.shareApp() },
                         text = stringResource(id = R.string.share_application),
-                        leadingIcon = VocabIcons.Share
+                        leadingIcon = VocabIcons.Share,
+                        bottomEnd = spacing.small,
+                        bottomStart = spacing.small
                     )
                 }
             }
@@ -117,11 +130,15 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsItem(
+private fun SettingsItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
-    leadingIcon: ImageVector
+    leadingIcon: ImageVector,
+    topStart: Dp = 0.dp,
+    topEnd: Dp = 0.dp,
+    bottomEnd: Dp = 0.dp,
+    bottomStart: Dp = 0.dp
 ) {
     val spacing = LocalSpacing.current
 
@@ -129,11 +146,13 @@ fun SettingsItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small)
-            .border(
-                width = spacing.stroke,
-                color = Color.Gray.copy(alpha = 0.25f),
-                shape = MaterialTheme.shapes.small
+            .clip(
+                RoundedCornerShape(
+                    topStart = topStart,
+                    topEnd = topEnd,
+                    bottomEnd = bottomEnd,
+                    bottomStart = bottomStart,
+                )
             )
             .background(color = MaterialTheme.colorScheme.surface)
             .clickable { onClick() }
@@ -143,7 +162,7 @@ fun SettingsItem(
             imageVector = leadingIcon,
             contentDescription = text,
         )
-        Spacer(modifier = Modifier.width(spacing.normal))
+        Spacer(Modifier.width(spacing.normal))
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,

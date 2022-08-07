@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import uz.javokhirdev.svocabulary.core.data.Extras
 import uz.javokhirdev.svocabulary.feature.carddetail.presentation.CardDetailScreen
 import uz.javokhirdev.svocabulary.feature.cards.presentation.CardsScreen
+import uz.javokhirdev.svocabulary.feature.flashcards.presentation.FlashcardsScreen
 import uz.javokhirdev.svocabulary.feature.setdetail.presentation.SetDetailScreen
 import uz.javokhirdev.svocabulary.feature.sets.presentation.SetsScreen
 import uz.javokhirdev.svocabulary.feature.settings.presentation.SettingsScreen
@@ -59,7 +60,8 @@ fun VocabNavHost(
         ) {
             CardsScreen(
                 onBackClick = { navController.popBackStack() },
-                onAddCardClick = navActions.navigateToCardDetail
+                onAddCardClick = navActions.navigateToCardDetail,
+                onFlashcardsClick = navActions.navigateToFlashcards
             )
         }
         composable(
@@ -75,6 +77,16 @@ fun VocabNavHost(
         }
         composable(route = Route.SETTINGS) {
             SettingsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = "${Route.FLASHCARDS}/{${Extras.SET_ID}}",
+            arguments = listOf(
+                navArgument(Extras.SET_ID) { type = NavType.LongType },
+            )
+        ) {
+            FlashcardsScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }

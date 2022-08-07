@@ -1,12 +1,15 @@
 package uz.javokhirdev.svocabulary.feature.setdetail.presentation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import uz.javokhirdev.svocabulary.core.data.DispatcherProvider
 import uz.javokhirdev.svocabulary.core.data.Extras
 import uz.javokhirdev.svocabulary.core.data.extensions.orNotId
@@ -20,11 +23,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SetDetailViewModel @Inject constructor(
     private val setsUseCases: SetsUseCases,
+    private val provider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
-    private val provider: DispatcherProvider
 ) : ViewModel() {
 
-    val uiState = MutableStateFlow(SetDetailState())
+    var uiState by mutableStateOf(SetDetailState())
+        private set
 
     private val setId = savedStateHandle.get<Long>(Extras.SET_ID).orNotId()
 
@@ -36,20 +40,20 @@ class SetDetailViewModel @Inject constructor(
         when (event) {
             is SetDetailEvent.TitleChanged -> updateTitle(event.title)
             is SetDetailEvent.DescriptionChanged -> updateDescription(event.description)
-            SetDetailEvent.OnSaveClick -> upsertSet()
+            SetDetailEvent.SaveClick -> upsertSet()
         }
     }
 
     private fun updateTitle(title: String) {
         updateIsButtonEnabled(
             title = title,
-            description = uiState.value.description
+            description = uiState.description
         )
     }
 
     private fun updateDescription(description: String) {
         updateIsButtonEnabled(
-            title = uiState.value.title,
+            title = uiState.title,
             description = description
         )
     }
@@ -58,7 +62,7 @@ class SetDetailViewModel @Inject constructor(
         title: String? = null,
         description: String? = null
     ) {
-        uiState.value = uiState.value.copy(
+        uiState = uiState.copy(
             title = title,
             description = description,
             isButtonEnabled = !title.isNullOrEmpty(),
@@ -66,53 +70,79 @@ class SetDetailViewModel @Inject constructor(
     }
 
     private fun getSetById() {
-        viewModelScope.launch(provider.io()) {
-            setsUseCases.getSetById(setId).collectLatest { model ->
-                val isUpdate = model.id != null
-                val title = model.title.orEmpty()
-                val description = model.description.orEmpty()
-                val resources = if (isUpdate) {
-                    SetDetailResouces(
-                        toolbarTitle = R.string.edit_set,
-                        buttonText = R.string.edit,
-                        buttonLeadingIcon = VocabIcons.Edit
-                    )
-                } else {
-                    SetDetailResouces(
-                        toolbarTitle = R.string.create_set,
-                        buttonText = R.string.save,
-                        buttonLeadingIcon = VocabIcons.Save
+        viewModelScope.launch {
+            withContext(provider.io()) {
+                setsUseCases.getSetById(setId).collectLatest {
+                    val isUpdate = it.id != null
+                    val title = it.title.orEmpty()
+                    val description = it.description.orEmpty()
+                    val resources = if (isUpdate) {
+                        SetDetailResouces(
+                            toolbarTitle = R.string.edit_set,
+                            buttonText = R.string.edit,
+                            buttonLeadingIcon = VocabIcons.Edit
+                        )
+                    } else {
+                        SetDetailResouces(
+                            toolbarTitle = R.string.create_set,
+                            buttonText = R.string.save,
+                            buttonLeadingIcon = VocabIcons.Save
+                        )
+                    }
+
+                    setSetData(
+                        title = title,
+                        description = description,
+                        resources = resources
                     )
                 }
-
-                uiState.value = uiState.value.copy(
-                    title = title,
-                    description = description,
-                    isButtonEnabled = title.isNotEmpty() && description.isNotEmpty(),
-                    resources = resources
-                )
             }
         }
     }
 
-    private fun upsertSet() {
-        uiState.value = uiState.value.copy(
-            isLoading = true
-        )
+    private suspend fun setSetData(
+        title: String,
+        description: String,
+        resources: SetDetailResouces
+    ) {
+        withContext(provider.main()) {
+            uiState = uiState.copy(
+                title = title,
+                description = description,
+                isButtonEnabled = title.isNotEmpty() && description.isNotEmpty(),
+                resources = resources
+            )
+        }
+    }
 
-        viewModelScope.launch(provider.io()) {
+    private fun upsertSet() {
+        viewModelScope.launch {
+            showLoading()
+
             val model = SetModel(
                 id = setId.orNullId(),
-                title = uiState.value.title,
-                description = uiState.value.description
+                title = uiState.title,
+                description = uiState.description
             )
 
-            setsUseCases.upsertSet(model).collectLatest {
-                uiState.value = uiState.value.copy(
-                    isLoading = false,
-                    isSuccess = it
-                )
+            withContext(provider.io()) {
+                setsUseCases.upsertSet(model).collectLatest { setIsSuccess(it) }
             }
+        }
+    }
+
+    private suspend fun setIsSuccess(isSuccess: Boolean) {
+        withContext(provider.main()) {
+            uiState = uiState.copy(
+                isLoading = false,
+                isSuccess = isSuccess
+            )
+        }
+    }
+
+    private suspend fun showLoading() {
+        withContext(provider.main()) {
+            uiState = uiState.copy(isLoading = true)
         }
     }
 }
