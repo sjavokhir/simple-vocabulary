@@ -51,7 +51,7 @@ projects [GitHub](https://github.com/javokhirsavriev/) .
 
 |![](images/screen01.png)| ![](images/screen02.png) | ![](images/screen03.png)
 :-------------------------:|:-------------------------: | :-------------------------:
-|![](images/screen04.png) | ![](images/screen05.png)
+|![](images/screen04.png) | ![](images/screen05.png) | ![](images/screen06.png)
 
 ## Status: 🚧 In progress
 

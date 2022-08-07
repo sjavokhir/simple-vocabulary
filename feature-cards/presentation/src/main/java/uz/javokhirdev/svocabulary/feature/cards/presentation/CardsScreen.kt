@@ -26,6 +26,7 @@ import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.model.CardModel
 import uz.javokhirdev.svocabulary.core.ui.R
 import uz.javokhirdev.svocabulary.core.ui.isScrollingUp
+import uz.javokhirdev.svocabulary.core.ui.rememberTtsController
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
@@ -42,6 +43,7 @@ fun CardsScreen(
     val spacing = LocalSpacing.current
     val clipboard = LocalClipboardManager.current
     val listState = rememberLazyListState()
+    val ttsController = rememberTtsController()
 
     uiState.lastLongClickedCardModel?.let {
         VocabActionSheet(
@@ -50,13 +52,12 @@ fun CardsScreen(
             },
             onCopyClick = {
                 clipboard.setText(
-                    AnnotatedString(
-                        "${it.term.orEmpty()} - ${it.definition.orEmpty()}"
-                    )
+                    AnnotatedString("${it.term} - ${it.definition}")
                 )
                 viewModel.handleEvent(CardsEvent.CardLongClick())
             },
             onListenClick = {
+                ttsController.say("${it.term} - ${it.definition}")
                 viewModel.handleEvent(CardsEvent.CardLongClick())
             },
             onEditClick = {
@@ -91,9 +92,15 @@ fun CardsScreen(
                 VocabTopAppBar(
                     title = "",
                     navigationIcon = VocabIcons.ArrowBack,
-                    onNavigationClick = onBackClick,
+                    onNavigationClick = {
+                        ttsController.shutDown()
+                        onBackClick()
+                    },
                     actions = {
-                        IconButton(onClick = { onAddCardClick(viewModel.setId, null) }) {
+                        IconButton(onClick = {
+                            ttsController.shutDown()
+                            onAddCardClick(viewModel.setId, null)
+                        }) {
                             Icon(
                                 imageVector = VocabIcons.Add,
                                 contentDescription = stringResource(id = R.string.add_card),
@@ -126,7 +133,10 @@ fun CardsScreen(
                         exit = scaleOut(),
                     ) {
                         VocabExtendedFloatingActionButton(
-                            onClick = { onFlashcardsClick(viewModel.setId) },
+                            onClick = {
+                                ttsController.shutDown()
+                                onFlashcardsClick(viewModel.setId)
+                            },
                             text = stringResource(id = R.string.flashcards),
                             leadingIcon = VocabIcons.FitnessCenter,
                             modifier = Modifier.windowInsetsPadding(
