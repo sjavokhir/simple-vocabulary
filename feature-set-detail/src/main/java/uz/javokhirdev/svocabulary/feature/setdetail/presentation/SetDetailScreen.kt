@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,12 +22,11 @@ import uz.javokhirdev.svocabulary.core.ui.R
 @ExperimentalMaterial3Api
 @Composable
 fun SetDetailScreen(
-    modifier: Modifier = Modifier,
     viewModel: SetDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val spacing = LocalSpacing.current
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState
 
     if (uiState.isSuccess) {
         LaunchedEffect(Unit) { onBackClick() }
@@ -52,10 +50,13 @@ fun SetDetailScreen(
             containerColor = Color.Transparent
         ) { innerPadding ->
             BoxWithConstraints(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                    )
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -69,7 +70,7 @@ fun SetDetailScreen(
                         color = Color.Gray,
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(spacing.medium))
+                    Spacer(Modifier.height(spacing.medium))
                     VocabTextField(
                         text = uiState.title.orEmpty(),
                         hint = stringResource(id = R.string.enter_title),
@@ -77,7 +78,7 @@ fun SetDetailScreen(
                             viewModel.handleEvent(SetDetailEvent.TitleChanged(it))
                         }
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
+                    Spacer(Modifier.height(spacing.normal))
                     VocabTextField(
                         text = uiState.description.orEmpty(),
                         hint = stringResource(id = R.string.enter_description),
@@ -85,10 +86,10 @@ fun SetDetailScreen(
                             viewModel.handleEvent(SetDetailEvent.DescriptionChanged(it))
                         }
                     )
-                    Spacer(modifier = Modifier.height(spacing.medium))
+                    Spacer(Modifier.height(spacing.medium))
                     VocabFilledButton(
                         onClick = {
-                            viewModel.handleEvent(SetDetailEvent.OnSaveClick)
+                            viewModel.handleEvent(SetDetailEvent.SaveClick)
                         },
                         text = stringResource(id = uiState.resources.buttonText),
                         leadingIcon = uiState.resources.buttonLeadingIcon,

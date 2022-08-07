@@ -8,11 +8,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +25,8 @@ import uz.javokhirdev.svocabulary.core.designsystem.icon.VocabIcons
 import uz.javokhirdev.svocabulary.core.designsystem.theme.LocalSpacing
 import uz.javokhirdev.svocabulary.core.model.CardModel
 import uz.javokhirdev.svocabulary.core.ui.R
+import uz.javokhirdev.svocabulary.core.ui.isScrollingUp
+import uz.javokhirdev.svocabulary.core.ui.rememberTtsController
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
@@ -33,52 +34,55 @@ import uz.javokhirdev.svocabulary.core.ui.R
 @ExperimentalMaterial3Api
 @Composable
 fun CardsScreen(
-    modifier: Modifier = Modifier,
     viewModel: CardsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onAddCardClick: (setId: Long?, cardId: Long?) -> Unit
+    onAddCardClick: (setId: Long?, cardId: Long?) -> Unit,
+    onFlashcardsClick: (setId: Long?) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState
     val spacing = LocalSpacing.current
     val clipboard = LocalClipboardManager.current
     val listState = rememberLazyListState()
-    val isClearAll = remember { mutableStateOf(false) }
-    val lastCardModel = remember { mutableStateOf(CardModel()) }
+    val ttsController = rememberTtsController()
 
-    if (lastCardModel.value.id != null) {
+    uiState.lastLongClickedCardModel?.let {
         VocabActionSheet(
-            onDismissClick = { lastCardModel.value = CardModel() },
+            onDismissClick = {
+                viewModel.handleEvent(CardsEvent.CardLongClick())
+            },
             onCopyClick = {
                 clipboard.setText(
-                    AnnotatedString(
-                        "${lastCardModel.value.term.orEmpty()} - ${lastCardModel.value.definition.orEmpty()}"
-                    )
+                    AnnotatedString("${it.term} - ${it.definition}")
                 )
-                lastCardModel.value = CardModel()
+                viewModel.handleEvent(CardsEvent.CardLongClick())
             },
-            onListenClick = {},
+            onListenClick = {
+                ttsController.say("${it.term} - ${it.definition}")
+                viewModel.handleEvent(CardsEvent.CardLongClick())
+            },
             onEditClick = {
-                onAddCardClick(viewModel.setId, lastCardModel.value.id)
-                lastCardModel.value = CardModel()
+                onAddCardClick(viewModel.setId, it.id)
+                viewModel.handleEvent(CardsEvent.CardLongClick())
             },
             onDeleteClick = {
-                viewModel.handleEvent(CardsEvent.OnDeleteClick(lastCardModel.value.id))
-                lastCardModel.value = CardModel()
+                viewModel.handleEvent(CardsEvent.CardDeleteClick(it.id))
+                viewModel.handleEvent(CardsEvent.CardLongClick())
             }
         )
     }
 
-    if (isClearAll.value) {
+    if (uiState.isOpenClearAllDialog) {
         VocabDialog(
             title = stringResource(id = R.string.clear_all),
             text = stringResource(id = R.string.clear_all_description),
             positiveText = stringResource(id = R.string.delete),
             negativeText = stringResource(id = R.string.cancel),
             onConfirmClick = {
-                viewModel.handleEvent(CardsEvent.OnClearAllClick)
-                isClearAll.value = false
+                viewModel.handleEvent(CardsEvent.ClearAllClick)
             },
-            onDismissClick = { isClearAll.value = false }
+            onDismissClick = {
+                viewModel.handleEvent(CardsEvent.OnClearAllDialog(false))
+            }
         )
     }
 
@@ -88,16 +92,24 @@ fun CardsScreen(
                 VocabTopAppBar(
                     title = "",
                     navigationIcon = VocabIcons.ArrowBack,
-                    onNavigationClick = onBackClick,
+                    onNavigationClick = {
+                        ttsController.shutDown()
+                        onBackClick()
+                    },
                     actions = {
-                        IconButton(onClick = { onAddCardClick(viewModel.setId, null) }) {
+                        IconButton(onClick = {
+                            ttsController.shutDown()
+                            onAddCardClick(viewModel.setId, null)
+                        }) {
                             Icon(
                                 imageVector = VocabIcons.Add,
                                 contentDescription = stringResource(id = R.string.add_card),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
-                        IconButton(onClick = { isClearAll.value = true }) {
+                        IconButton(onClick = {
+                            viewModel.handleEvent(CardsEvent.OnClearAllDialog(true))
+                        }) {
                             Icon(
                                 imageVector = VocabIcons.Clear,
                                 contentDescription = stringResource(id = R.string.clear_all),
@@ -121,7 +133,10 @@ fun CardsScreen(
                         exit = scaleOut(),
                     ) {
                         VocabExtendedFloatingActionButton(
-                            onClick = { },
+                            onClick = {
+                                ttsController.shutDown()
+                                onFlashcardsClick(viewModel.setId)
+                            },
                             text = stringResource(id = R.string.flashcards),
                             leadingIcon = VocabIcons.FitnessCenter,
                             modifier = Modifier.windowInsetsPadding(
@@ -134,30 +149,32 @@ fun CardsScreen(
             containerColor = Color.Transparent
         ) { innerPadding ->
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                    )
             ) {
                 if (uiState.isLoading) {
-                    VocabLoadingWheel(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    VocabLoadingWheel(Modifier.align(Alignment.Center))
                 } else if (uiState.cards.isNotEmpty()) {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+                        modifier = Modifier.fillMaxSize(),
+                        state = listState
                     ) {
-                        item { Spacer(modifier = Modifier.height(spacing.small)) }
+                        item { Spacer(Modifier.height(spacing.small)) }
                         items(uiState.cards) {
                             CardItem(
                                 model = it,
                                 onCardClick = {},
-                                onCardLongClick = { model -> lastCardModel.value = model }
+                                onCardLongClick = { model ->
+                                    viewModel.handleEvent(CardsEvent.CardLongClick(model))
+                                }
                             )
                         }
-                        item { Spacer(modifier = Modifier.height(spacing.small)) }
+                        item { Spacer(Modifier.height(spacing.small)) }
                     }
                 } else {
                     Text(
@@ -174,70 +191,41 @@ fun CardsScreen(
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-fun CardItem(
+private fun CardItem(
     model: CardModel,
     onCardClick: (Long?) -> Unit,
     onCardLongClick: (CardModel) -> Unit,
 ) {
     val spacing = LocalSpacing.current
 
-    Column(
+    Surface(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = spacing.small)
             .combinedClickable(
                 onClick = { onCardClick(model.id) },
                 onLongClick = { onCardLongClick(model) },
-            )
+            ),
+        color = MaterialTheme.colorScheme.surface
     ) {
-        Divider(
-            color = Color.LightGray.copy(alpha = 0.25f),
-            thickness = spacing.stroke
-        )
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = spacing.normal,
+                    vertical = spacing.extraNormal
+                )
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        horizontal = spacing.normal,
-                        vertical = spacing.extraNormal
-                    )
-            ) {
-                Text(
-                    text = model.term.orEmpty(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = 18.sp
-                )
-                Spacer(modifier = Modifier.height(spacing.extraSmall))
-                Text(
-                    text = model.definition.orEmpty(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
-                )
-            }
+            Text(
+                text = model.term.orEmpty(),
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp
+            )
+            Spacer(Modifier.height(spacing.extraSmall))
+            Text(
+                text = model.definition.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Gray
+            )
         }
-        Divider(
-            color = Color.LightGray.copy(alpha = 0.25f),
-            thickness = spacing.stroke
-        )
     }
-}
-
-@Composable
-private fun LazyListState.isScrollingUp(): Boolean {
-    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
-    return remember(this) {
-        derivedStateOf {
-            if (previousIndex != firstVisibleItemIndex) {
-                previousIndex > firstVisibleItemIndex
-            } else {
-                previousScrollOffset >= firstVisibleItemScrollOffset
-            }.also {
-                previousIndex = firstVisibleItemIndex
-                previousScrollOffset = firstVisibleItemScrollOffset
-            }
-        }
-    }.value
 }

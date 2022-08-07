@@ -92,7 +92,7 @@ fun ActionItem(
             contentDescription = text,
             tint = color
         )
-        Spacer(modifier = Modifier.width(spacing.normal))
+        Spacer(Modifier.width(spacing.normal))
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,

@@ -21,17 +21,17 @@ projects [GitHub](https://github.com/javokhirsavriev/) .
 </div>
 <br>
 <div align="left">
-    <a href = "https://github.com/javokhirsavriev/photoplay/network/">
-        <img src = "https://img.shields.io/github/forks/javokhirsavriev/photoplay" />
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/network/">
+        <img src = "https://img.shields.io/github/forks/javokhirsavriev/simple-vocabulary" />
     </a>
-    <a href = "https://github.com/javokhirsavriev/photoplay/stargazers">
-        <img src = "https://img.shields.io/github/stars/javokhirsavriev/photoplay" />
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/stargazers">
+        <img src = "https://img.shields.io/github/stars/javokhirsavriev/simple-vocabulary" />
     </a>
-    <a href = "https://github.com/javokhirsavriev/photoplay/issues">
-        <img src = "https://img.shields.io/github/issues/javokhirsavriev/photoplay" />
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/issues">
+        <img src = "https://img.shields.io/github/issues/javokhirsavriev/simple-vocabulary" />
     </a>  
-    <a href = "https://github.com/javokhirsavriev/photoplay/blob/master/LICENSE">
-        <img src = "https://img.shields.io/github/license/javokhirsavriev/photoplay" />
+    <a href = "https://github.com/javokhirsavriev/simple-vocabulary/blob/master/LICENSE">
+        <img src = "https://img.shields.io/github/license/javokhirsavriev/simple-vocabulary" />
     </a>
     <a href="">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>
@@ -49,10 +49,9 @@ projects [GitHub](https://github.com/javokhirsavriev/) .
 
 ## 📸 Screens
 
-|   |   |   |
-|---|---|---|
 |![](images/screen01.png)| ![](images/screen02.png) | ![](images/screen03.png)
-|![](images/screen04.png) | ![](images/screen05.png)
+:-------------------------:|:-------------------------: | :-------------------------:
+|![](images/screen04.png) | ![](images/screen05.png) | ![](images/screen06.png)
 
 ## Status: 🚧 In progress
 

@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 rootProject.name = "simple-vocabulary"
@@ -26,14 +27,13 @@ include ":feature-sets"
 include ":feature-sets:data"
 include ":feature-sets:domain"
 include ":feature-sets:presentation"
-
 include ":feature-set-detail"
 
 include ":feature-cards"
 include ":feature-cards:data"
 include ":feature-cards:domain"
 include ":feature-cards:presentation"
-
 include ":feature-card-detail"
 
 include ":feature-settings"
+include ":feature-flashcards"

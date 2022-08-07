@@ -1,3 +1,3 @@
 object Other {
-    const val coilCompose = "io.coil-kt:coil-compose:1.3.2"
+    const val konfetti = "nl.dionsegijn:konfetti-compose:2.0.2"
 }

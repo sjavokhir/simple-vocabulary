@@ -6,7 +6,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,12 +23,11 @@ import uz.javokhirdev.svocabulary.core.ui.R
 @ExperimentalMaterial3Api
 @Composable
 fun CardDetailScreen(
-    modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val spacing = LocalSpacing.current
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState
 
     if (uiState.isSuccess) {
         LaunchedEffect(Unit) { onBackClick() }
@@ -53,10 +51,13 @@ fun CardDetailScreen(
             containerColor = Color.Transparent
         ) { innerPadding ->
             BoxWithConstraints(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .consumedWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+                    )
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,7 +72,7 @@ fun CardDetailScreen(
                             viewModel.handleEvent(CardDetailEvent.TermChanged(it))
                         }
                     )
-                    Spacer(modifier = Modifier.height(spacing.normal))
+                    Spacer(Modifier.height(spacing.normal))
                     VocabTextField(
                         text = uiState.definition.orEmpty(),
                         hint = stringResource(id = R.string.enter_definition),
@@ -79,10 +80,10 @@ fun CardDetailScreen(
                             viewModel.handleEvent(CardDetailEvent.DefinitionChanged(it))
                         }
                     )
-                    Spacer(modifier = Modifier.height(spacing.medium))
+                    Spacer(Modifier.height(spacing.medium))
                     VocabFilledButton(
                         onClick = {
-                            viewModel.handleEvent(CardDetailEvent.OnSaveClick)
+                            viewModel.handleEvent(CardDetailEvent.SaveClick)
                         },
                         text = stringResource(id = uiState.resources.buttonText),
                         leadingIcon = uiState.resources.buttonLeadingIcon,

@@ -8,4 +8,5 @@ object Route {
     const val CARD_DETAIL = "card_detail"
 
     const val SETTINGS = "settings"
+    const val FLASHCARDS = "flashcards"
 }
