@@ -30,27 +30,33 @@ fun VocabDialog(
                 .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = spacing.medium,
-                        vertical = spacing.normal
+            Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = spacing.medium,
+                            vertical = spacing.normal
+                        )
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge
                     )
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(Modifier.height(spacing.extraNormal))
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(Modifier.height(spacing.normal))
+                    Spacer(Modifier.height(spacing.extraNormal))
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(
+                            end = spacing.extraNormal,
+                            bottom = spacing.extraNormal
+                        )
                 ) {
                     VocabTextButton(
                         onClick = onDismissClick,

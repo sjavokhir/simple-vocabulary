@@ -10,12 +10,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import nl.dionsegijn.konfetti.core.Angle
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.Spread
+import nl.dionsegijn.konfetti.core.emitter.Emitter
 import uz.javokhirdev.svocabulary.core.data.DispatcherProvider
 import uz.javokhirdev.svocabulary.core.data.Extras
 import uz.javokhirdev.svocabulary.core.data.extensions.orNotId
 import uz.javokhirdev.svocabulary.core.model.CardModel
 import uz.javokhirdev.svocabulary.feature.cards.domain.usecase.CardsUseCases
 import uz.javokhirdev.svocabulary.feature.flashcards.presentation.components.SwipedOutDirection
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,10 +42,17 @@ class FlashcardsViewModel @Inject constructor(
 
     fun handleEvent(event: FlashcardsEvent) {
         when (event) {
-            FlashcardsEvent.InfoClick -> {}
-            FlashcardsEvent.OnEmpty -> onEmpty()
+            FlashcardsEvent.SideClick -> changeSide()
             is FlashcardsEvent.RemoveCard -> removeCard(event.item, event.direction)
+            FlashcardsEvent.Empty -> onEmpty()
+            is FlashcardsEvent.OnTipsDialog -> {
+                uiState = uiState.copy(isOpenTipsDialog = event.isOpen)
+            }
         }
+    }
+
+    private fun changeSide() {
+        uiState = uiState.copy(isFrontSide = !uiState.isFrontSide)
     }
 
     private fun getCards() {
@@ -88,5 +101,20 @@ class FlashcardsViewModel @Inject constructor(
                 uiState = uiState.copy(isFinished = true)
             }
         }
+    }
+
+    fun rain(): List<Party> {
+        return listOf(
+            Party(
+                speed = 0f,
+                maxSpeed = 15f,
+                damping = 0.9f,
+                angle = Angle.BOTTOM,
+                spread = Spread.ROUND,
+                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(100),
+                position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
+            )
+        )
     }
 }

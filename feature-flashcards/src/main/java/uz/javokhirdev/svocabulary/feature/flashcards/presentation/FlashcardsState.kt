@@ -9,5 +9,7 @@ data class FlashcardsState(
     val isFinished: Boolean = false,
     val cards: SnapshotStateList<CardModel> = mutableStateListOf(),
     val forgots: SnapshotStateList<CardModel> = mutableStateListOf(),
-    val knows: SnapshotStateList<CardModel> = mutableStateListOf()
+    val knows: SnapshotStateList<CardModel> = mutableStateListOf(),
+    val isFrontSide: Boolean = true,
+    val isOpenTipsDialog: Boolean = false
 )

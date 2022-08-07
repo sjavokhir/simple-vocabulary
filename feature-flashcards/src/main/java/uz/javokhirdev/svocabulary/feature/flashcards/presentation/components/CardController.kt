@@ -3,11 +3,7 @@ package uz.javokhirdev.svocabulary.feature.flashcards.presentation.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -31,20 +27,6 @@ interface CardController {
     fun isCardOut(): Boolean
     fun swipeRight()
     fun swipeLeft()
-}
-
-
-@Composable
-fun rememberCardController(): CardController {
-    val scope = rememberCoroutineScope()
-    val screenWidth = with(LocalDensity.current) {
-        LocalConfiguration.current.screenWidthDp.dp.toPx()
-    }
-    return remember {
-        val swipeX = Animatable(0f)
-        val swipeY = Animatable(0f)
-        CardControllerImpl(swipeX, swipeY, scope, screenWidth)
-    }
 }
 
 open class CardControllerImpl(
